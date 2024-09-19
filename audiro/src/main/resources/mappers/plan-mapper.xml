@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.audiro.repository.TravelPlanDao">
+
+	<insert id="insertTravelPlan" 
+		parameterType="TravelPlan"
+		keyProperty="plan.travelPlanId" 
+		keyColumn="travel_plan_id"
+		useGeneratedKeys="true">
+		insert into travel_plan (users_id, title, start_date, duration, end_date)
+		values (#{plan.usersId}, #{plan.title}, #{plan.startDate,jdbcType=DATE}, #{plan.duration}, #{plan.endDate,jdbcType=DATE})
+	</insert>
+	
+	<insert id="insertDetailedPlan">
+		insert 
+		into detailed_plan 
+			(travel_plan_id, destination_id, day, start_time, end_time)
+		values 
+			(#{travelPlanId}, #{destinationId}, #{day}, #{startTime,jdbcType=DATE}, #{endTime,jdbcType=DATE})
+	
+	</insert>
+
+	<select id="selectAllTrvaelPlan" resultType="TravelPlan">
+		select * from
+		travel_plan where users_id = #{usersId} order by created_time
+	</select>
+	
+	<select id="selectAllTrvaelPlanOrderByTitle" resultType="TravelPlan">
+		select * from
+		travel_plan where users_id = #{usersId} order by title
+	</select>
+	
+	<select id="selectTravelPlanById" resultType="TravelPlan">
+		select * from travel_plan
+		where travel_plan_id = #{travelPlanId}
+	</select>
+
+	<select id="selectDetailedPlan" resultType="DetailedPlanDto">
+		select distinct d.*, t.name, t.img_url, t.travel_destination_id 
+		from detailed_plan d
+		join travel_destination t
+		on d.destination_id = t.travel_destination_id
+		where travel_plan_id = #{travelPlanId}
+		order by detailed_plan_id
+	</select>
+	
+	<select id="selectMaxDay"  resultType="Integer">
+		select duration+1 from travel_plan where travel_plan_id = #{travelPlanId}
+	</select>
+	
+	<update id="updateTravelPlan">
+		update travel_plan
+		set title = #{title}, duration = #{duration}, start_date = #{startDate,jdbcType=DATE}, end_date = #{endDate,jdbcType=DATE}
+		where travel_plan_id = #{travelPlanId}
+	</update>
+	
+	<delete id="deleteAllDetailedPlan">
+		delete from detailed_plan
+		where travel_plan_id = #{travelPlanId}
+	</delete>
+	
+	<delete id="deletePlanById">
+		delete from travel_plan
+		where travel_plan_id = #{travelPlanId}
+	</delete>
+
+</mapper>

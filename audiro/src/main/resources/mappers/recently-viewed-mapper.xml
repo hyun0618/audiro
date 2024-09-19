@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.audiro.repository.RecentlyViewedDao">
+	
+	 <!-- 최근 본 여행지 추가 -->
+    <insert id="insertRecentlyViewedDest">
+        insert into recently_viewed (destination_id) values (#{destinationId})
+    </insert>
+	
+	
+    <!-- 최근 본 여행지 보기 -->
+    <select id="selectRecentlyReviewedDest" resultType="com.audiro.dto.RecentlyViewedDto">
+     	with RankedDestinations as (
+		    select rv.destination_id, td.name, td.img_url, rv.viewed_at,
+		        row_number() over (partition by rv.destination_id order by rv.viewed_at desc) as rn
+		    from recently_viewed rv
+		    join travel_destination td on rv.destination_id = td.travel_destination_id
+		)
+		select destination_id, name, img_url, viewed_at
+		from RankedDestinations
+		where rn = 1
+		order by viewed_at desc
+        fetch first 5 rows only
+    </select>
+	
+</mapper>

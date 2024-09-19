@@ -1,0 +1,51 @@
+@charset "UTF-8";
+
+#allDiv{
+	margin-top: 50px;
+}
+.tableList table thead {
+    background: #27334c;
+    color: #ffffff;
+}
+tbody {
+    display: table-row-group;
+    vertical-align: middle;
+    unicode-bidi: isolate;
+    border-color: inherit;
+}
+table {
+    border-collapse: collapse;
+    margin-left: auto;
+	margin-right: auto;
+	font-size: 20px;
+	height: 100%;
+	table-layout: fixed;
+}
+
+user agent stylesheet
+table {
+    border-collapse: separate;
+    text-indent: initial;
+    border-spacing: 2px;
+}
+
+td, th {
+	/* font-family: 'Cafe24SsurroundAir'; */
+	border: 1px solid black;
+	padding: 20px;
+    text-align: left; /* Change text alignment to left */
+    padding: 20px;
+}
+
+td.img{
+	 width: 5%;
+}
+img.deletePlanImg{
+	max-width: 100%; /* 이미지의 최대 너비를 부모 요소(td)의 너비에 맞추기 */
+    height: auto; /* 비율 유지를 위해 height를 auto로 설정 */
+}
+
+.link{
+	color: inherit; /* 부모 요소의 색상을 상속 */
+    text-decoration: none; /* 밑줄 제거 */
+}

@@ -1,0 +1,58 @@
+@charset "UTF-8";
+
+main {
+    margin-top: 5px;
+    margin-bottom: 100px;
+}
+
+main .card {
+    width: 400px;
+    padding: 30px;
+    border: none;
+}
+
+form input {
+    height: 50px;
+    margin-bottom: 30px;
+}
+
+.card input:focus {
+    box-shadow: none;
+    background-color: transparent;
+}
+
+input:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0 30px #fff inset ;
+    -webkit-text-fill-color: #000;
+}
+
+input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus, input:-webkit-autofill:active {
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+#id, #password, #confirmPassword, #username, #nickname, #phone, #email {
+    border: none;
+    border-radius: 0;
+    border-bottom: 2px solid #082567;
+}
+
+.input-container {
+    position: relative;
+}
+
+.input-container > i {
+    position: absolute;
+ 	top: 16px;
+    right: -30px;
+}
+
+#btnSignUp {
+	height: 50px;
+	margin-top: 20px;
+	background-color: #082567;
+}
+
+.text-danger {
+	font-size: 14px;
+	margin-bottom: 10px;
+}

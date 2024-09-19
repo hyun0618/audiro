@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    <mapper namespace="com.audiro.repository.ReviewDao">
+    
+        <!-- 여행후기 가장 많이 쓴 유저 top3 -->
+        <select id="selectReviewUserTop3" resultType="Post" >
+        	select * from (
+		    select u.users_id, u.nickname, count(*) AS user_count
+		    from post p
+		    join users u ON p.users_id = u.users_id
+		    where p.post_type_id = 10
+		    group by u.users_id, u.nickname
+		    order by user_count DESC
+			) where rownum &lt;= 3
+        </select>
+        
+        <!-- 댓글 많이 달린 여행후기 top3 댓글갯수 중복일경우 id순, +찜+좋아요. -->
+        <select id="selectCommentToReiviewTop3" resultType="Post">
+        	select c.post_id, count(*) as c_count
+			from comments c
+			join post p on c.post_id = p.post_id
+			where p.post_type_id = 10
+			group by c.post_id
+			order by c_count desc
+			fetch first 3 rows only;    
+        </select>     
+        
+		<!-- 여행후기 댓글 많이 쓴 유저 top3 중복 고민
+        <select id="selectWriteToReiviewCommentUserTop3" resultType="users">
+        	select u.nickname, count(*) as c_count
+			from users u
+			join comments c on u.users_id = c.users_id
+			join post p on c.post_id = p.post_id
+			where p.post_type_id = 10
+			group by u.nickname
+			order by c_count desc
+			fetch first 3 rows only;	
+        </select>
+        -->
+        <!-- 여행후기에서 good 많은 게시글 top3 (중복일경우 users_id 가 작은순)select-->
+        <select id="selectReviewGoodTop3" resultType="Post">
+            select *
+            from post
+            where post_type_id = 10
+            order by good DESC, users_id asc
+            fetch first 3 row only; 
+        </select> 
+          
+        
+        
+        
+        <!-- 굿 많은 여행 후기 1등 상세보기    다시 확인!!!!!!!!!!!!!
+        <select id="selectReviewGoodTop3" resultType="Post">
+            SELECT u.*, p.*, t.*, d.*
+            FROM users u
+            JOIN post p ON u.users_id = p.users_id
+            JOIN travel_plan t ON p.travel_plan_id = t.travel_plan_id
+            JOIN detailed_plan d ON t.travel_plan_id = d.travel_plan_id
+            WHERE p.post_type_id = 10
+            AND p.post_id = (
+            SELECT post_id
+            FROM (
+            SELECT post_id
+            FROM post
+            WHERE post_type_id = 10
+            ORDER BY good DESC
+            ) WHERE ROWNUM = 1);
+        </select>-->
+</mapper>

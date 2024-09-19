@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.audiro.repository.ReviewDao">
+
+	<!-- 내여행후기 -->
+	<!-- 내 여행후기 전체 불러오기 (최신순) -->
+<select id="readMyReview" resultType="com.audiro.dto.MyReviewListDto">
+    SELECT 
+        p.users_id, 
+        p.title, 
+        p.modified_time, 
+        p.post_id, 
+        u.nickname, 
+        u.id, 
+        MAX(fp.users_id) AS favorite_post, 
+        pr.path, 
+        pr.introduction
+    FROM post p
+    LEFT JOIN users u ON p.users_id = u.users_id
+    LEFT JOIN favorite_post fp ON p.post_id = fp.post_id AND u.users_id = fp.users_id
+    LEFT JOIN profile pr ON p.users_id = pr.users_id
+    WHERE p.post_type_id = 10
+          AND u.users_id = #{id}
+    GROUP BY p.users_id, p.title, p.modified_time, p.post_id, u.nickname, u.id, pr.path, pr.introduction
+    ORDER BY p.modified_time DESC
+</select>
+
+	<!-- 내 여행후기 전체 불러오기 (좋아요순) 
+	<select id="readMyReviewByGood" resultType="com.audiro.dto.MyReviewListDto" parameterType="MyReviewListDto">
+		select p.users_id,
+		title, p.modified_time, p.post_id, u.nickname
+		from post p
+		join users u on p.users_id = u.users_id
+		where p.users_id = ${usersId}
+		and p.post_type_id = 10
+		order by good desc
+	</select>
+	-->
+	<!-- 프로필 이미지가져오기 -->
+	<select id="profileImg" resultType="String">
+		select p.path
+		from profile p
+		join users u on p.users_id = u.users_id
+		where u.users_id = #{usersId}
+	</select>
+	
+	<!-- 나를 찜한 유저 수 -->
+	<select id="countLike" resultType="Integer" >
+		select count(*)
+		from favorite_users fu
+		join users u on fu.users_id = u.users_id
+		where u.id = #{id}
+	</select>
+
+	<!-- 내 여행일기 개수 -->
+	<select id="countMyReveiw" resultType="Integer" >
+		select count(*) as post_count
+		from post p
+		join users u on p.users_id = u.users_id
+		where p.post_type_id = 10
+		and u.id = #{id}
+	</select>
+	
+
+	<!-- 해당 찜 갯수 -->
+	<select id="countFavoriteReveiw" resultType="Integer" >
+		select count(*)
+        from favorite_post fp
+        join post p on fp.post_id=p.post_id
+        where p.post_id=#{postId}
+	</select>
+	
+	
+	<!-- 여행 후기 1개 상세 내용불러오기 -->
+<select id="readDetailsReviewById" resultType="DetailsReviewDto">
+    select p.*, u.nickname
+    from post p
+    join users u on p.users_id = u.users_id
+    where p.post_id = #{postId}
+</select>
+
+	<!-- 해당 여행후기 좋아요 수 -->
+	<select id="countGoodByPostId" resultType="Integer">
+		select good
+		from post
+		where post_id = #{postId}
+	</select>
+	
+	
+	 
+	<!-- 관심유저 담아있는 내용 불러오기. -->
+	<select id="getFavoriteUserIds" resultType="com.audiro.dto.LikeUserFavoriteDto">
+		select 
+         	    fu.*
+         	  , u.users_id as favoriteUserId
+   		from favorite_users fu
+   		join users u on fu.users_id = u.users_id
+   		where 
+         	 u.users_id = #{usersId}
+        and fu.interested_user_Id = #{interestedUserId} 
+	</select>
+
+	<!-- 해당 여행일기 유저 관심유저담기 -->
+	<insert id="addLikeUser">
+		insert into favorite_users (users_id, interested_user_id)
+		values (#{usersId}, #{interestedUserId})
+	</insert>
+	
+	<!-- 해당 관심유저 삭제하기 -->
+	<delete id="deleteLikeUser" >
+		delete from favorite_users 
+		where favorite_users_id = #{favoriteUsersId}
+	</delete>
+	
+	<!-- 여행후기 찜 담아있는 정보 불러오기. -->
+	<select id="getFavoritePostIds" resultType="com.audiro.dto.LikeReviewPostDto">
+        select 
+		    fp.favorite_post_id as favoritePostId,
+		    fp.post_id,
+		    fp.users_id
+		from 
+		    favorite_post fp
+		join 
+		    users u on fp.users_id = u.users_id
+		where 
+		    u.users_id = #{usersId}
+		    and fp.post_Id = #{postId}
+	</select>
+	
+	<!-- 해당 여행일기 찜담기  -->
+	<insert id="addLikeReview" >
+		insert into favorite_post (users_id, post_id)
+		values (#{usersId}, #{postId})
+	</insert>
+	
+	<!-- 해당 여행후기 찜 삭제하기 -->
+	<delete id="deleteLikeReview">
+		delete from favorite_post 
+		where favorite_post_id = #{favoritePostId}
+	</delete>
+	
+
+	<!-- 여행 후기 1개 삭제 -->
+	<delete id="deleteReview" >
+		delete from post where post_id = #{postId}
+	</delete>
+
+	<!-- 여행후기 저장하기 -->
+	<insert id="insertReview" >
+        insert into post (users_id, post_type_id, title, content)
+		select #{usersId}, 10, #{title}, #{content}
+		from users u
+		where u.id = #{id}
+	</insert>
+
+	<!-- 여행후기 글 수정하기 -->
+	<update id="updateReview" >
+		update post
+		set title = #{title},
+		content = #{content, jdbcType=CLOB},
+		modified_time = systimestamp
+		where post_id = #{postId}
+	</update>
+
+	<!-- 모든 여행후기 불러오기  최신순-->
+	<select id="selectReviewAll" resultType="com.audiro.repository.Post">
+		select * from post
+		where
+		post_type_id = 10
+		order by modified_time desc
+	</select>
+	
+	<!-- 모든 여행후기 불러오기 좋아요순-->
+	<select id="rankingGoodReview" resultType="com.audiro.repository.Post">
+		select * from post
+		where
+		post_type_id = 10
+		order by good desc
+	</select>
+	
+	
+
+	<!-- 여행후기 제목, 내용, 제목+내용, 닉네임검색 -->
+	<select id="searchKeyword" resultType="com.audiro.repository.Post">
+			select p.*, u.nickname as userNickname
+			<if test="usersId != null and usersId != ''">
+				, favorite_post_id
+			</if>
+			from post p
+			inner join users u on p.users_id = u.users_id
+			<if test="usersId != null and usersId != ''">
+				left join favorite_post fp
+				on p.post_id = fp.post_id
+				and fp.users_id = #{usersId}
+			</if>
+		<where>
+        	p.post_type_id = 10
+			<choose>
+				<when test='category != null and category.equals("t")'>
+					and upper(p.title) like '%'||upper(#{keyword})||'%'
+				</when>
+				<when test='category != null and category.equals("c")'>
+					and upper(p.content) like '%'||upper(#{keyword})||'%'
+				</when>
+				<when test='category != null and category.equals("tc")'>
+					and (
+						upper(p.title) like '%'||upper(#{keyword})||'%' 
+						or upper(p.content) like '%'||upper(#{keyword})||'%'
+					)
+				</when>
+				<when test='category != null and category.equals("n")'>
+					and upper(u.nickname) like upper(#{keyword})
+				</when>
+			</choose>
+		</where>
+		order by p.post_id desc
+	</select>
+
+
+
+
+</mapper>

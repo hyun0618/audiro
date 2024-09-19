@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.audiro.repository.MypageDao">
+
+    <select id="selectUsersAllProfileAllById" resultType="com.audiro.dto.MypageDto">
+        select u.*, p.*
+        from users u, profile p
+        where u.id = #{id} 
+        and u.users_id = p.users_id
+    </select>
+
+
+    <!-- 마이페이지 비밀번호 변경 update -->
+    <update id="updatePasswordHash">
+        update users
+        set password_hash = #{passwordHash}
+        where id = #{id}
+    </update>
+    
+    <!-- 마이페이지 이름 변경 update -->
+    <update id="updateUserName">
+        update users
+        set user_name = #{userName}
+        where id = #{id}
+    </update>
+    
+    <!-- 마이페이지 닉네임 변경 update -->
+    <update id="updateNickname">
+        update users
+        set nickname = #{nickname}
+        where id = #{id}
+    </update>
+    
+    <!-- 마이페이지 전화번호 변경 update -->
+    <update id="updatePhone">
+        update users
+        set phone = #{phone}
+        where id = #{id}
+    </update>
+    
+    <!-- 마이페이지 이메일 변경 update -->
+    <update id="updateEmail">
+        update users
+        set email = #{email}
+        where id = #{id}
+    </update>
+    
+    <!-- 마이페이지 자기소개 변경 update -->
+    <update id="updateIntroduction">
+        update profile
+        set introduction = #{introduction}
+        where users_id = #{usersId}
+    </update>
+    
+    <!-- 중복검사에 쓰일 sql -->
+    <select id="selectNickname" resultType="com.audiro.dto.MypageDto">
+        select * from users where nickname = #{nickname}
+    </select>
+    
+    <select id="selectPhone" resultType="com.audiro.dto.MypageDto">
+        select * from users where phone = #{phone}
+    </select>
+    
+    <select id="selectEmail" resultType="com.audiro.dto.MypageDto">
+        select * from users where email = #{email}
+    </select>
+    
+    <!-- 프로필 변경 업데이트 sql-->
+    <update id="updateProfilePathByUsersId">
+        update profile
+        set path = #{path}
+        where users_id = #{usersId}
+    </update>
+    
+    <!-- 비밀번호 select -->
+    <select id="selectPasswordByUsersId" resultType="String">
+        select password_hash
+        from users
+        where users_id = #{usersId}
+    </select>
+    
+
+    <!-- 탈퇴 sql id로도 탈퇴 가능 -->
+    <delete id="deleteUserByUsersId" parameterType="Integer">
+        delete from users
+        where users_id = #{usersId}
+    </delete>
+</mapper>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+	<settings>
+		<setting name="mapUnderscoreToCamelCase" value="true" />
+	</settings>
+	<typeAliases>
+        <typeAlias type="com.audiro.repository.User" alias="User"/>
+		<typeAlias type="com.audiro.repository.TravelDestination" alias="Destination" />
+        <typeAlias type="com.audiro.repository.FavoriteUsers" alias="FavoriteUsers" />
+        <typeAlias type="com.audiro.repository.FavoriteDestination" alias="FavoriteDestination" />
+        <typeAlias type="com.audiro.repository.FavoritePost" alias="FavoritePost" />
+		<typeAlias type="com.audiro.dto.FavoriteDestinationDto" alias="FavoriteDestinationDto" />
+		<typeAlias type="com.audiro.repository.TravelPlan" alias="TravelPlan"/>
+		<typeAlias type="com.audiro.repository.DetailedPlan" alias="DetailedPlan"/>
+		<typeAlias type="com.audiro.dto.DetailedPlanDto" alias="DetailedPlanDto"/>
+		<typeAlias type="com.audiro.repository.Post" alias="Post"/> 
+		<typeAlias type="com.audiro.repository.Comment" alias="Comment"/>		
+		<typeAlias type="com.audiro.repository.ReviewDao" alias="ReviewDao"/>		
+		<typeAlias type="com.audiro.repository.DraftPost" alias="DraftPost"/>		
+		<typeAlias type="com.audiro.dto.CreateReviewDto" alias="CreateReviewDto"/>		
+		<typeAlias type="com.audiro.dto.MyReviewListDto" alias="MyReviewListDto"/>		
+		<typeAlias type="com.audiro.dto.LikeReviewPostDto" alias="LikeReviewPostDto"/>
+		<typeAlias type="com.audiro.dto.DetailsReviewDto" alias="DetailsReviewDto"/>	
+		<typeAlias type="com.audiro.repository.DataDao" alias="DestinationTag"/>	
+		<typeAlias type="com.audiro.repository.DataDao" alias="TravelDestination"/>	
+	</typeAliases>
+</configuration>

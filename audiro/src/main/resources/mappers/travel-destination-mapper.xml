@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- TODO: -->
+<mapper namespace="com.audiro.repository.TravelDestinationDao">
+	
+	<select id="findAll"
+		resultType="Destination">
+		SELECT * FROM travel_destination
+	</select>
+	
+	<select id="selectAllById" resultType="Destination">
+        select * from travel_destination where travel_destination_id = #{travelDestinationId}
+    </select>
+    
+    <select id="selectNameAndImgUrlByTagsAndKeyword" resultType="Destination">
+        select distinct td.travel_destination_id, td.name, td.img_url
+        from travel_destination td
+        <where>
+            <if test="region != null and region.length > 0">
+                and td.travel_destination_id in (
+                    select dt.destination_id
+                    from destination_tag dt
+                    join tag t on dt.tag_id = t.tag_id
+                    where t.name in
+                    <foreach item="item" index="index" collection="region" open="(" separator="," close=")">
+                        #{item}
+                    </foreach>
+                )
+            </if>
+            <if test="theme != null and theme.length > 0">
+                and td.travel_destination_id in (
+                    select dt.destination_id
+                    from destination_tag dt
+                    join tag t on dt.tag_id = t.tag_id
+                    where t.name in
+                    <foreach item="item" index="index" collection="theme" open="(" separator="," close=")">
+                        #{item}
+                    </foreach>
+                )
+            </if>
+            <if test="companion != null and companion.length > 0">
+                and td.travel_destination_id in (
+                    select dt.destination_id
+                    from destination_tag dt
+                    join tag t on dt.tag_id = t.tag_id
+                    where t.name in
+                    <foreach item="item" index="index" collection="companion" open="(" separator="," close=")">
+                        #{item}
+                    </foreach>
+                )
+            </if>
+            <if test="keyword != null and keyword != ''">
+            and (
+                td.name like '%' || #{keyword} || '%'
+                or td.description like '%' || #{keyword} || '%'
+            )
+        </if>
+        </where>
+        order by td.travel_destination_id
+        offset #{offset} rows fetch next #{limit} rows only
+    </select>
+    
+    <select id="countDestinations" resultType="int">
+        select count(distinct td.travel_destination_id)
+        from travel_destination td
+        <where>
+            <if test="region != null and region.length > 0">
+                and td.travel_destination_id in (
+                    select dt.destination_id
+                    from destination_tag dt
+                    join tag t on dt.tag_id = t.tag_id
+                    where t.name in
+                    <foreach item="item" index="index" collection="region" open="(" separator="," close=")">
+                        #{item}
+                    </foreach>
+                )
+            </if>
+            <if test="theme != null and theme.length > 0">
+                and td.travel_destination_id in (
+                    select dt.destination_id
+                    from destination_tag dt
+                    join tag t on dt.tag_id = t.tag_id
+                    where t.name in
+                    <foreach item="item" index="index" collection="theme" open="(" separator="," close=")">
+                        #{item}
+                    </foreach>
+                )
+            </if>
+            <if test="companion != null and companion.length > 0">
+                and td.travel_destination_id in (
+                    select dt.destination_id
+                    from destination_tag dt
+                    join tag t on dt.tag_id = t.tag_id
+                    where t.name in
+                    <foreach item="item" index="index" collection="companion" open="(" separator="," close=")">
+                        #{item}
+                    </foreach>
+                )
+            </if>
+            <if test="keyword != null and keyword != ''">
+                and (
+                    td.name like '%' || #{keyword} || '%'
+                    or td.description like '%' || #{keyword} || '%'
+                )
+            </if>
+        </where>
+    </select>
+    
+</mapper>

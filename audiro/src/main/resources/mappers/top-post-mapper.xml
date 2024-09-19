@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.audiro.repository.TopPostDao">
+    
+    <!-- 좋아요 추가 -->
+    <insert id="insertFavoriteTopPost">
+        insert into favorite_post (users_id, post_id)
+        values (
+            (select users_id from users where id = #{signedInUser}),
+            #{postId}
+        )
+    </insert>
+
+    <!-- 좋아요 삭제 -->
+    <delete id="deleteFavoriteTopPost">
+        delete from favorite_post
+        where users_id = (select users_id from users where id = #{signedInUser})
+        and post_id = #{postId}
+    </delete>
+    
+    <!-- 로그인 유저의 찜 상태 -->
+    <select id="selectFavoritTopPostState" resultType="integer">
+    		select fp.favorite_post_id
+		from favorite_post fp
+		    join users u on fp.users_id = u.users_id
+		where fp.post_id = #{postId}
+		    and u.id = #{userId}
+    </select>
+    
+    <!-- 메인화면 인기여행지 -->
+    <select id="selectTopPost" resultType="com.audiro.dto.TopPostDto"> 
+	    <!-- Top Post (메인페이지) -->
+		with favorite_count as (
+		    select p.post_id, p.title, p.created_time, p.good, 
+		        count(fp.favorite_post_id) as num_favorites
+		    from post p
+		    left join favorite_post fp on p.post_id = fp.post_id
+		    group by p.post_id, p.title, p.created_time, p.good
+		),
+		<!-- 각 포스트에 순위를 매기는 CTE -->
+		ranked_posts as (
+		    select fc.post_id, fc.title, fc.created_time, fc.good, fc.num_favorites,
+		        rank() over (order by fc.num_favorites desc) as rank
+		    from favorite_count fc
+		)
+		<!-- 최종 결과 선택 -->
+		select rp.post_id, rp.title, p.content, rp.created_time, rp.good, rp.num_favorites, rp.rank
+		from ranked_posts rp
+		join post p on rp.post_id = p.post_id
+		where rp.rank &lt;=15
+		order by rank
+		fetch first 15 rows only
+    </select>
+    
+</mapper>

@@ -1,0 +1,747 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.audiro.repository.CommunityDao">
+
+    <!-- id로 userid뽑기 -->
+    <select id="selectUsersIdById" resultType="Integer">
+        select users_id
+        from users
+        where id = #{id}
+    </select>
+    
+    
+    <!-- 화면에 인기여행지 top10개(찜많은순) 
+    <select id="selectPopularTravelDestinations10" resultType="com.audiro.dto.CommunityFavoriteDestinationDto">
+        select destination_id, count(*) count
+        from favorite_destination
+        group by destination_id
+        order by count DESC,
+        destination_id ASC
+        fetch first 10 rows only
+    </select> 
+    -->
+    
+    <!-- TODO: 위에서 인기여행지 id 뽑은걸로 여행지 테이블의 정보 필요함(화면에 제목+사진보여주어야됨) 
+        인기 여행지 클릭했을 때 인기 여행지 상세보기는 리다이렉트 써서 destination_id에 해당하는 상세보기 페이지로 이동
+     
+    <select id="selectPopular10" resultType="com.audiro.dto.CommunityFavoriteDestinationDto">
+        SELECT
+        f.destination_id,
+        f.users_id,
+        t.name,
+        t.img_url,
+        COUNT(*) AS count
+        FROM
+        favorite_destination f
+        JOIN
+        travel_destination t ON f.destination_id = t.travel_destination_id
+        GROUP BY
+        f.destination_id, t.name, t.img_url
+        ORDER BY
+        count DESC,
+        f.destination_id ASC
+        FETCH FIRST 10 ROWS ONLY;
+    </select>
+   -->
+    
+    <!-- 인기 여행지 top10에서 찜 누르면 찜 여행지에 insert 
+    <insert id="insertFavoriteDestinations">
+        INSERT INTO favorite_destination (users_id, destination_id) 
+        VALUES (#{usersId}, #{destinationId})
+    </insert>
+    -->
+    
+    <!-- 찜 취소 
+    <delete id="deleteCancelFavoriteDestinations">
+        DELETE FROM favorite_destination 
+        WHERE users_id = #{usersId} AND destination_id = #{destinationId}        
+    </delete>
+    -->
+    <!-- 인기 여행지가 아니라 인기(찜 많은) 여행후기 10개 가져와야 함. 여기서 뽑은 post_id로 title은 따로 뽑아가져오기.-->
+    <select id="selectReviewPopular10" resultType="com.audiro.dto.CommunityPopularReviewDto">
+        SELECT f.post_id, COUNT(f.post_id) AS count
+        FROM post p
+        JOIN favorite_post f ON p.post_id = f.post_id
+        GROUP BY p.post_id
+        ORDER BY count DESC, p.post_id DESC
+        FETCH FIRST 10 ROWS ONLY;
+    </select>
+    
+    <!-- 인기 여행후기 top10에서 찜 누르면 찜 여행지에 insert -->
+    <insert id="insertFavoriteReview">
+        INSERT INTO favorite_post (users_id, post_id) 
+        VALUES (#{usersId}, #{postId})
+    </insert>
+    
+    
+    <!-- 찜 취소 -->
+    <delete id="deleteCancelFavoriteReview">
+        DELETE FROM favorite_post 
+        WHERE users_id = #{usersId} AND post_id = #{postId}        
+    </delete>
+    
+<!-- ///////////////////페이징 처리 시작//////////////////////////////// -->
+
+    <!-- 페이징 처리 위해서 전체 게시판 총 게시물 수를 가져오는 쿼리 -->
+    <select id="countAllPosts" resultType="int">
+        SELECT COUNT(*)
+        FROM post p, users u
+        WHERE p.users_id = u.users_id
+        AND (p.post_type_id = 20 OR p.post_type_id = 30)
+    </select>
+
+    <!-- 페이징 처리 위해서 여행 메이트 게시판 총 게시물 수를 가져오는 쿼리 -->
+    <select id="countMatePosts" resultType="int">
+        SELECT COUNT(*)
+        FROM post p, users u
+        WHERE p.users_id = u.users_id
+        AND p.post_type_id = 20
+    </select>
+    
+        <!-- 페이징 처리 위해서 자유 게시판 총 게시물 수를 가져오는 쿼리 -->
+    <select id="countFreePosts" resultType="int">
+        SELECT COUNT(*)
+        FROM post p, users u
+        WHERE p.users_id = u.users_id
+        AND p.post_type_id = 30
+    </select>
+
+    <!--페이징 처리 위해서 검색어와 카테고리에 따라 전체 레코드 수를 계산하는 쿼리 -->
+    <select id="countSearchKeyword" resultType="int">
+        <bind name="searchKeyword"
+            value="keyword.replaceAll('\\s+', '')" />
+        SELECT COUNT(*)
+        FROM post p
+        JOIN users u ON p.users_id = u.users_id
+        <where>
+            <choose>
+                <when
+                    test='category1.equals("mf") and category2.equals("t")'>
+                    replace(upper(p.title), ' ', '') LIKE '%' || upper(#{searchKeyword}) || '%'
+                    AND p.post_type_id != 10
+                </when>
+                <when
+                    test='category1.equals("mf") and category2.equals("c")'>
+                    replace(upper(p.content), ' ', '') LIKE '%' || upper(#{searchKeyword}) || '%'
+                    AND p.post_type_id != 10
+                </when>
+                <when
+                    test='category1.equals("mf") and category2.equals("tc")'>
+                    (replace(upper(p.title), ' ', '') LIKE '%' || upper(#{searchKeyword}) || '%'
+                    OR replace(upper(p.content), ' ', '') LIKE '%' ||
+                    upper(#{searchKeyword}) || '%')
+                    AND p.post_type_id != 10
+                </when>
+                <when
+                    test='category1.equals("mf") and category2.equals("a")'>
+                    replace(upper(u.nickname), ' ', '') LIKE '%' || upper(#{searchKeyword}) || '%'
+                    AND p.post_type_id != 10
+                </when>
+                <when
+                    test='category1.equals("m") and category2.equals("t")'>
+                    replace(upper(p.title), ' ', '') LIKE '%' || upper(#{searchKeyword}) || '%'
+                    AND p.post_type_id = 20
+                </when>
+                <when
+                    test='category1.equals("m") and category2.equals("c")'>
+                    replace(upper(p.content), ' ', '') LIKE '%' || upper(#{searchKeyword}) || '%'
+                    AND p.post_type_id = 20
+                </when>
+                <when
+                    test='category1.equals("m") and category2.equals("tc")'>
+                    (replace(upper(p.title), ' ', '') LIKE '%' || upper(#{searchKeyword}) || '%'
+                    OR replace(upper(p.content), ' ', '') LIKE '%' ||
+                    upper(#{searchKeyword}) || '%')
+                    AND p.post_type_id = 20
+                </when>
+                <when
+                    test='category1.equals("m") and category2.equals("a")'>
+                    replace(upper(u.nickname), ' ', '') LIKE '%' || upper(#{searchKeyword}) || '%'
+                    AND p.post_type_id = 20
+                </when>
+                <when
+                    test='category1.equals("f") and category2.equals("t")'>
+                    replace(upper(p.title), ' ', '') LIKE '%' || upper(#{searchKeyword}) || '%'
+                    AND p.post_type_id = 30
+                </when>
+                <when
+                    test='category1.equals("f") and category2.equals("c")'>
+                    replace(upper(p.content), ' ', '') LIKE '%' || upper(#{searchKeyword}) || '%'
+                    AND p.post_type_id = 30
+                </when>
+                <when
+                    test='category1.equals("f") and category2.equals("tc")'>
+                    (replace(upper(p.title), ' ', '') LIKE '%' || upper(#{searchKeyword}) || '%'
+                    OR replace(upper(p.content), ' ', '') LIKE '%' ||
+                    upper(#{searchKeyword}) || '%')
+                    AND p.post_type_id = 30
+                </when>
+                <when
+                    test='category1.equals("f") and category2.equals("a")'>
+                    replace(upper(u.nickname), ' ', '') LIKE '%' || upper(#{searchKeyword}) || '%'
+                    AND p.post_type_id = 30
+                </when>
+            </choose>
+        </where>
+    </select>
+
+
+    <!-- 페이징 처리. 통합(전체) 게시판 목록 select 최신순으로 가져옴. 페이징 처리 10개씩 -->
+    <select id="selectPagingEntireOrderByIdDesc" resultType="com.audiro.repository.Post">
+        SELECT p.*, u.nickname
+        FROM post p, users u
+        WHERE p.users_id = u.users_id
+        AND (p.post_type_id = 20 OR p.post_type_id = 30)
+        ORDER BY p.created_time DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+        <!-- 페이징 처리. 통합 게시판 목록 select 인기순으로 가져옴 -->
+    <select id="selectPagingEntireOrderByGoodDesc" resultType="com.audiro.repository.Post">
+        select p.*, u.nickname 
+        from post p, users u 
+        where p.users_id = u.users_id
+        and (p.post_type_id = 20 or p.post_type_id = 30)
+        order by p.good DESC, p.post_id DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+    
+    <!-- 페이징 처리. 여행메이트 게시판 목록 select 최신순으로 가져옴 -->
+    <select id="selectPagingMateOrderByCreatedTimeDesc" resultType="com.audiro.repository.Post">
+        select p.*, u.nickname 
+        from post p, users u 
+        where p.users_id = u.users_id
+        and p.post_type_id = 20
+        order by p.created_time desc
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+    
+    <!-- 페이징 처리. 여행메이트 게시판 목록 select 인기순으로 가져옴 -->
+    <select id="selectPagingMateOrderByGoodDesc" resultType="com.audiro.repository.Post">
+        select p.*, u.nickname 
+        from post p, users u 
+        where p.users_id = u.users_id
+        and p.post_type_id = 20
+        order by p.good DESC, p.post_id DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+    
+    <!-- 페이징 처리. 자유 게시판 목록 select 최신순으로 가져옴 -->
+    <select id="selectPagingFreeOrderByCreatedTimeDesc" resultType="com.audiro.repository.Post">
+        select p.*, u.nickname 
+        from post p, users u 
+        where p.users_id = u.users_id
+        and p.post_type_id = 30
+        order by p.created_time desc
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+    
+    <!--페이징 처리. 자유 게시판 목록 select 인기순으로 가져옴 -->
+    <select id="selectPagingFreeOrderByGoodDesc" resultType="com.audiro.repository.Post">
+        select p.*, u.nickname 
+        from post p, users u 
+        where p.users_id = u.users_id
+        and p.post_type_id = 30
+        order by p.good DESC, p.post_id DESC 
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+    
+        <!-- 공백 제거 검색. 최신순정렬 페이징 처리 -->
+    <select id="searchKeywordOrderById2Paging" resultType="com.audiro.repository.Post">
+        <bind name="searchKeyword" value="keyword.replaceAll('\\s+', '')" />
+        SELECT p.*, u.nickname FROM post p
+        JOIN users u ON p.users_id = u.users_id
+        <where>
+            <choose>
+                <when test='category1.equals("mf") and category2.equals("t")'>
+                    replace(upper(p.title), ' ', '') LIKE '%' || upper(#{searchKeyword}) || '%'
+                    AND p.post_type_id != 10
+                </when>
+                <when test='category1.equals("mf") and category2.equals("c")'>
+                    replace(upper(p.content), ' ', '') LIKE '%' || upper(#{searchKeyword}) || '%'
+                    AND p.post_type_id != 10
+                </when>
+                <when test='category1.equals("mf") and category2.equals("tc")'>
+                    (replace(upper(p.title), ' ', '') LIKE '%' || upper(#{searchKeyword}) || '%'
+                    OR replace(upper(p.content), ' ', '') LIKE '%' || upper(#{searchKeyword}) || '%')
+                    AND p.post_type_id != 10
+                </when>
+                <when test='category1.equals("mf") and category2.equals("a")'>
+                    replace(upper(u.nickname), ' ', '') LIKE '%' || upper(#{searchKeyword}) || '%'
+                    AND p.post_type_id != 10
+                </when>
+                <when test='category1.equals("m") and category2.equals("t")'>
+                    replace(upper(p.title), ' ', '') LIKE '%' || upper(#{searchKeyword}) || '%'
+                    AND p.post_type_id = 20
+                </when>
+                <when test='category1.equals("m") and category2.equals("c")'>
+                    replace(upper(p.content), ' ', '') LIKE '%' || upper(#{searchKeyword}) || '%'
+                    AND p.post_type_id = 20
+                </when>
+                <when test='category1.equals("m") and category2.equals("tc")'>
+                    (replace(upper(p.title), ' ', '') LIKE '%' || upper(#{searchKeyword}) || '%'
+                    OR replace(upper(p.content), ' ', '') LIKE '%' || upper(#{searchKeyword}) || '%')
+                    AND p.post_type_id = 20
+                </when>
+                <when test='category1.equals("m") and category2.equals("a")'>
+                    replace(upper(u.nickname), ' ', '') LIKE '%' || upper(#{searchKeyword}) || '%'
+                    AND p.post_type_id = 20
+                </when> 
+                <when test='category1.equals("f") and category2.equals("t")'>
+                    replace(upper(p.title), ' ', '') LIKE '%' || upper(#{searchKeyword}) || '%'
+                    AND p.post_type_id = 30
+                </when> 
+                <when test='category1.equals("f") and category2.equals("c")'>
+                    replace(upper(p.content), ' ', '') LIKE '%' || upper(#{searchKeyword}) || '%'
+                    AND p.post_type_id = 30
+                </when>
+                <when test='category1.equals("f") and category2.equals("tc")'>
+                    (replace(upper(p.title), ' ', '') LIKE '%' || upper(#{searchKeyword}) || '%'
+                    OR replace(upper(p.content), ' ', '') LIKE '%' || upper(#{searchKeyword}) || '%')
+                    AND p.post_type_id = 30
+                </when>
+                <when test='category1.equals("f") and category2.equals("a")'>
+                    replace(upper(u.nickname), ' ', '') LIKE '%' || upper(#{searchKeyword}) || '%'
+                    AND p.post_type_id = 30
+                </when>                                                               
+            </choose>
+        </where>
+        ORDER BY p.post_id DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+    
+    
+<!-- ///////////////////페이징 처리 끝//////////////////////////////// -->    
+    <!-- 통합(전체) 게시판 목록 select 최신순으로 가져옴  -->
+    <select id="selectEntireOrderByCreatedTimeDesc" resultType="com.audiro.repository.Post">
+        select p.*, u.nickname 
+        from post p, users u 
+        where p.users_id = u.users_id
+        and (p.post_type_id = 20 or p.post_type_id = 30)
+        order by p.created_time desc
+    </select>
+   
+    
+    <!-- 통합 게시판 목록 select 인기순으로 가져옴 -->
+    <select id="selectEntireOrderByGoodDesc" resultType="com.audiro.repository.Post">
+        select p.*, u.nickname 
+        from post p, users u 
+        where p.users_id = u.users_id
+        and (p.post_type_id = 20 or p.post_type_id = 30)
+        order by p.good desc
+    </select>
+    
+    
+    
+    <!-- 여행메이트 게시판 목록 select 최신순으로 가져옴 -->
+    <select id="selectMateOrderByCreatedTimeDesc" resultType="com.audiro.repository.Post">
+        select p.*, u.nickname 
+        from post p, users u 
+        where p.users_id = u.users_id
+        and p.post_type_id = 20
+        order by p.created_time desc
+    </select>
+    
+    
+    
+    <!-- 여행메이트 게시판 목록 select 인기순으로 가져옴 -->
+    <select id="selectMateOrderByGoodDesc" resultType="com.audiro.repository.Post">
+        select p.*, u.nickname 
+        from post p, users u 
+        where p.users_id = u.users_id
+        and p.post_type_id = 20
+        order by p.good desc
+    </select>
+   
+    
+    <!-- 자유 게시판 목록 select 최신순으로 가져옴 -->
+    <select id="selectFreeOrderByCreatedTimeDesc" resultType="com.audiro.repository.Post">
+        select p.*, u.nickname 
+        from post p, users u 
+        where p.users_id = u.users_id
+        and p.post_type_id = 30
+        order by p.created_time desc
+    </select>
+    
+    
+    <!-- 자유 게시판 목록 select 인기순으로 가져옴 -->
+    <select id="selectFreeOrderByGoodDesc" resultType="com.audiro.repository.Post">
+        select p.*, u.nickname 
+        from post p, users u 
+        where p.users_id = u.users_id
+        and p.post_type_id = 30
+        order by p.good desc
+    </select>
+    
+    
+
+        
+    <!--(자유+여행메이트 글쓰면) post테이블에 insert하는 문장 -->
+    <insert id="insertFreeAndMate">
+        insert into post (users_id, post_type_id, title, content)
+        values (#{usersId}, #{postTypeId}, #{title}, #{content})
+    </insert>
+    
+    
+    <!-- 사용자가 good버튼 누르면 good 증가  
+    update.where조건 그 테이블의 pk로 하기. 그래야 딱 1행만 나와서 변경가능함 -->
+    <update id="updatePostGood">
+        update post set good = good + 1
+        where post_id = #{postId}
+    </update>
+   
+    
+    <!-- 사용자가 good버튼 한번 또 누르면 good 삭제(누른 good취소) -->
+    <update id="updateCancelPostGood">
+        update post set good = good - 1
+        where post_id = #{postId}
+    </update>
+    
+    <!-- good누른 사용자 저장 -->
+    <insert id="insertGoodUser">
+        INSERT INTO user_good (post_id, users_id) VALUES (#{postId}, #{usersId})
+    </insert>
+    
+    <!-- 특정 사용자가 특정 게시물에 good을 했는지 확인하는 쿼리 -->
+    <select id="checkGoodUser">
+        SELECT COUNT(*) AS count FROM user_good WHERE post_id = #{postId} AND users_id = #{usersId}
+    </select>
+    
+    <!-- 자유+여행메이트 상세 페이지 select 
+    <select id="selectDetailsFreeAndMate" resultType="com.audiro.repository.Post">
+        select p.*, u.nickname, u.id
+        from post p 
+        join users u
+        on p.users_id = u.users_id
+        where p.post_id = #{postId}
+    </select>
+    -->
+    
+    <!-- 자유+여행메이트 상세 페이지 select -->
+    <select id="selectDetailsFreeAndMate" resultType="com.audiro.dto.CommunityPostDetailsDto">
+        select p.*, u.*, f.path
+        from post p 
+        join users u
+        on p.users_id = u.users_id
+        join profile f
+        on u.users_id = f.users_id 
+        where p.post_id = #{postId}
+    </select>
+     
+     
+    <!-- 자유+여행메이트 게시판에서 수정(update)하는 문장 -->
+    <update id="updateFreeAndMate">
+        update post
+        set post_type_id = #{postTypeId},
+        title = #{title},
+        content = #{content},
+        modified_time = systimestamp
+        where post_id = #{postId}
+    </update>
+    
+    
+    <!-- 자유+여행메이트 게시판에서 삭제(delete)하는 문장 -->
+    <delete id="deletePostById">
+        delete from post 
+        where post_id = #{postId}
+    </delete>    
+    
+
+    
+    <!-- 자유 or 여행메이트 게시판 상세보기 select
+    <select id="selectDetailsFreeAndMate" resultType="com.audiro.repository.Post">
+        select * from post where post_id = #{postId} and post_type_id = #{postTypeId}
+    </select>-->
+    
+    
+    <!-- 임시 저장 등록 insert -->
+    <insert id="insertDraftPost">
+        insert into draft_post (type_id, title, users_id, content) 
+        values (#{typeId}, #{title}, #{usersId}, #{content})
+    </insert>
+    
+    
+    <!--(자유+여행메이트) 임시저장된 목록 list 불러오기 select -->
+    <select id="selectFreeAndMateDraftPost" resultType="com.audiro.repository.DraftPost">
+        select *
+        from draft_post
+        where users_id = #{usersId}
+        and (type_id = 20 or type_id = 30)
+    </select>
+    
+    
+    <!-- 임시저장 된 게시글 1개 불러오기 select -->
+    <select id="selectDraftPost" resultType="com.audiro.repository.DraftPost">
+        select *
+        from draft_post
+        where draft_post_id = #{draftPostId}
+    </select>
+    
+    
+    <!-- 임시저장 된 글 삭제하기 -->
+    <delete id="deleteDraftPostById">
+        delete from draft_post where draft_post_id = #{draftPostId}
+    </delete>
+    
+    
+    <!-- 임시저장 된 글 전체 삭제하기 -->
+    <delete id="deleteAllDraftPostsByUserId">
+        delete from draft_post where users_id = #{usersId}
+    </delete>
+
+
+
+    <!-- 커뮤니티 검색 창 최신순 -->
+    <select id="searchKeywordOrderById" resultType="com.audiro.repository.Post">
+        <bind name="searchKeyword" value="'%' + keyword + '%'" />
+        SELECT p.*, u.nickname FROM post p
+        JOIN users u ON p.users_id = u.users_id
+        <where>
+            <choose>
+                <when test='category1.equals("mf") and category2.equals("t")'>
+                    upper(p.title) LIKE upper(#{searchKeyword})
+                    AND p.post_type_id != 10
+                </when>
+                <when test='category1.equals("mf") and category2.equals("c")'>
+                    upper(p.content) LIKE upper(#{searchKeyword})
+                    AND p.post_type_id != 10
+                </when>
+                <when test='category1.equals("mf") and category2.equals("tc")'>
+                    upper(p.title) LIKE upper(#{searchKeyword})
+                    or upper(p.content) LIKE upper(#{searchKeyword})
+                    AND p.post_type_id != 10
+                </when>
+                <when test='category1.equals("mf") and category2.equals("a")'>
+                    upper(u.nickname) LIKE upper(#{searchKeyword})
+                    AND p.post_type_id != 10
+                </when>
+                <when test='category1.equals("m") and category2.equals("t")'>
+                    upper(p.title) LIKE upper(#{searchKeyword})
+                    AND p.post_type_id = 20
+                </when>
+                <when test='category1.equals("m") and category2.equals("c")'>
+                    upper(p.content) LIKE upper(#{searchKeyword})
+                    AND p.post_type_id = 20
+                </when>
+                <when test='category1.equals("m") and category2.equals("tc")'>
+                    upper(p.title) LIKE upper(#{searchKeyword})
+                    or upper(p.content) LIKE upper(#{searchKeyword})
+                    AND p.post_type_id = 20
+                </when>
+                <when test='category1.equals("m") and category2.equals("a")'>
+                    upper(u.nickname) LIKE upper(#{searchKeyword})
+                    AND p.post_type_id = 20
+                </when> 
+                <when test='category1.equals("f") and category2.equals("t")'>
+                    upper(p.title) LIKE upper(#{searchKeyword})
+                    AND p.post_type_id = 30
+                </when> 
+                <when test='category1.equals("f") and category2.equals("c")'>
+                    upper(p.content) LIKE upper(#{searchKeyword})
+                    AND p.post_type_id = 30
+                </when>
+                <when test='category1.equals("f") and category2.equals("tc")'>
+                    upper(p.title) LIKE upper(#{searchKeyword})
+                    or upper(p.content) LIKE upper(#{searchKeyword})
+                    AND p.post_type_id = 30
+                </when>
+                <when test='category1.equals("f") and category2.equals("a")'>
+                     upper(u.nickname) LIKE upper(#{searchKeyword})
+                    AND p.post_type_id = 30
+                </when>                                                               
+            </choose>
+        </where>
+    ORDER BY p.post_id DESC
+    </select>
+    
+<!-- 공백 제거 검색. 최신순정렬 -->
+<select id="searchKeywordOrderById2" resultType="com.audiro.repository.Post">
+    <bind name="searchKeyword" value="keyword.replaceAll('\\s+', '')" />
+    SELECT p.*, u.nickname FROM post p
+    JOIN users u ON p.users_id = u.users_id
+    <where>
+        <choose>
+            <when test='category1.equals("mf") and category2.equals("t")'>
+                replace(upper(p.title), ' ', '') LIKE '%' || upper(#{searchKeyword}) || '%'
+                AND p.post_type_id != 10
+            </when>
+            <when test='category1.equals("mf") and category2.equals("c")'>
+                replace(upper(p.content), ' ', '') LIKE '%' || upper(#{searchKeyword}) || '%'
+                AND p.post_type_id != 10
+            </when>
+            <when test='category1.equals("mf") and category2.equals("tc")'>
+                (replace(upper(p.title), ' ', '') LIKE '%' || upper(#{searchKeyword}) || '%'
+                OR replace(upper(p.content), ' ', '') LIKE '%' || upper(#{searchKeyword}) || '%')
+                AND p.post_type_id != 10
+            </when>
+            <when test='category1.equals("mf") and category2.equals("a")'>
+                replace(upper(u.nickname), ' ', '') LIKE '%' || upper(#{searchKeyword}) || '%'
+                AND p.post_type_id != 10
+            </when>
+            <when test='category1.equals("m") and category2.equals("t")'>
+                replace(upper(p.title), ' ', '') LIKE '%' || upper(#{searchKeyword}) || '%'
+                AND p.post_type_id = 20
+            </when>
+            <when test='category1.equals("m") and category2.equals("c")'>
+                replace(upper(p.content), ' ', '') LIKE '%' || upper(#{searchKeyword}) || '%'
+                AND p.post_type_id = 20
+            </when>
+            <when test='category1.equals("m") and category2.equals("tc")'>
+                (replace(upper(p.title), ' ', '') LIKE '%' || upper(#{searchKeyword}) || '%'
+                OR replace(upper(p.content), ' ', '') LIKE '%' || upper(#{searchKeyword}) || '%')
+                AND p.post_type_id = 20
+            </when>
+            <when test='category1.equals("m") and category2.equals("a")'>
+                replace(upper(u.nickname), ' ', '') LIKE '%' || upper(#{searchKeyword}) || '%'
+                AND p.post_type_id = 20
+            </when> 
+            <when test='category1.equals("f") and category2.equals("t")'>
+                replace(upper(p.title), ' ', '') LIKE '%' || upper(#{searchKeyword}) || '%'
+                AND p.post_type_id = 30
+            </when> 
+            <when test='category1.equals("f") and category2.equals("c")'>
+                replace(upper(p.content), ' ', '') LIKE '%' || upper(#{searchKeyword}) || '%'
+                AND p.post_type_id = 30
+            </when>
+            <when test='category1.equals("f") and category2.equals("tc")'>
+                (replace(upper(p.title), ' ', '') LIKE '%' || upper(#{searchKeyword}) || '%'
+                OR replace(upper(p.content), ' ', '') LIKE '%' || upper(#{searchKeyword}) || '%')
+                AND p.post_type_id = 30
+            </when>
+            <when test='category1.equals("f") and category2.equals("a")'>
+                replace(upper(u.nickname), ' ', '') LIKE '%' || upper(#{searchKeyword}) || '%'
+                AND p.post_type_id = 30
+            </when>                                                               
+        </choose>
+    </where>
+    ORDER BY p.post_id DESC
+</select>
+
+
+    <!-- 랭킹 -->
+
+    <!-- 사용자 좋아요 TOP 3 순위 매기는 쿼리 -->
+    <select id="selectLikeUserTop3" resultType="com.audiro.dto.CommunityRankingDto">
+            SELECT
+                t.interested_user_id,
+                t.count,
+                t.rank,
+                u.nickname
+            FROM (
+                SELECT
+                    interested_user_id,
+                    COUNT(*) AS count,
+                    RANK() OVER (ORDER BY COUNT(*) DESC) AS rank
+                FROM
+                    favorite_users
+                GROUP BY
+                    interested_user_id
+            ) t
+            JOIN users u ON t.interested_user_id = u.users_id
+            WHERE t.rank &lt;= 3
+            FETCH FIRST 3 ROWS ONLY
+    </select>
+    
+    <!-- 여행 메이트+자유 게시판 good 많은 TOP 3 순위 매기는 sql 
+    <select id="selectAllPostsGoodTop3" resultType="com.audiro.dto.CommunityRankingDto">
+        SELECT post_id, nickname, title, good, rank
+        FROM (
+            SELECT p.post_id, u.nickname, p.title, p.good,
+               RANK() OVER (ORDER BY p.good DESC) AS rank
+            FROM post p
+            JOIN users u ON p.users_id = u.users_id
+            WHERE p.post_type_id = 20 OR p.post_type_id = 30
+        )
+        WHERE rank &lt;= 3 AND ROWNUM &lt;= 3
+        order by good DESC, post_id DESC
+    </select>
+    -->
+    
+        <!-- 여행 메이트+자유 게시판 good 많은 TOP 3 순위 매기는 sql -->
+    <select id="selectAllPostsGoodTop3"
+        resultType="com.audiro.dto.CommunityRankingDto">
+        SELECT post_id, nickname,
+        CASE
+        WHEN LENGTH(title) > 10 THEN SUBSTR(title, 1, 10) || '...'
+        ELSE title
+        END AS title,
+        good, rank
+        FROM (
+        SELECT p.post_id, u.nickname, p.title, p.good,
+        RANK() OVER (ORDER BY p.good DESC) AS rank
+        FROM post p
+        JOIN users u ON
+        p.users_id = u.users_id
+        WHERE p.post_type_id = 20 OR
+        p.post_type_id = 30
+        )
+        WHERE rank &lt;= 3 AND ROWNUM &lt;= 3
+        ORDER BY good DESC, post_id DESC
+    </select>
+
+    <!-- 전체 댓글 많이 단 유저 top3 -->
+    <select id="selectCommentsUserTop3" resultType="com.audiro.dto.CommunityRankingDto">
+    SELECT users_id, nickname, count, rank
+    FROM (
+        SELECT c.users_id, u.nickname, 
+               COUNT(c.comments_id) AS count,
+               RANK() OVER (ORDER BY COUNT(c.comments_id) DESC) AS rank
+        FROM comments c
+        JOIN users u ON c.users_id = u.users_id
+        GROUP BY c.users_id, u.nickname
+    )
+    WHERE rank &lt;= 3 AND ROWNUM &lt;= 3
+    </select>
+    
+    <!-- 댓글 등록 sql -->
+    <insert id="insertCommunityComment">
+        insert into comments (post_id, users_id, content, is_private)
+        VALUES (#{postId}, #{usersId}, #{content}, #{isPrivate})
+    </insert>
+    
+    <!-- 전체 댓글 개수 불러오기 -->
+    <select id="selectCommunityCommentCount" resultType="Integer">
+        select count(*) from comments where post_id = #{postId}
+    </select>
+    
+    <!-- 댓글 불러오기 이건데 페이징으로 가져오자.
+    <select id="selectByUsersId" resultType="Comment">
+        select * from comments where id = #{UsersId}
+    </select> -->
+    <!-- 댓글 불러오기 - 페이징 적용 -->
+    
+    <!-- 
+        페이징 쿼리: 특정 ID의 댓글을 가져옵니다.
+        - id: 특정 댓글의 ID를 지정합니다.
+        - pageSize: 한 페이지에 표시할 댓글 수를 지정합니다.
+        - offset: 몇 번째 댓글부터 가져올지 지정합니다. -->
+   <!-- 댓글목록 최신순으로 페이징해서 가져오기 -->
+    <select id="selectCommentsByUsersIdPaging" resultType="com.audiro.dto.CommunityCommentsSelectListDto">
+        select c.*, u.*, f.path, f.introduction, f.registration_time
+        from comments c
+        join users u
+        on c.users_id = u.users_id
+        join profile f
+        on u.users_id = f.users_id
+        where c.post_id = #{postId}
+        order by c.created_time desc
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select> 
+    
+    <!-- 댓글 수정하기 -->
+    <update id="updateCommentByCommentsId">
+        update comments 
+        set content = #{content},
+            is_private = #{isPrivate},
+            modified_time = systimestamp
+        where comments_id = #{commentsId}
+    </update>
+    
+    <!-- 댓글 삭제하기 -->
+    <delete id="deleteCommentByCommentsId">
+        delete from comments
+        where comments_id = #{commentsId}
+    </delete>
+         
+</mapper>

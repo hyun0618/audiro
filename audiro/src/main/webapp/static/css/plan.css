@@ -1,0 +1,180 @@
+@charset "UTF-8";
+
+body {
+	font-size: 18px;
+	line-height: 1.5;
+}
+
+#allDiv{
+	margin-top: 50px;
+}
+#noLine{
+	border-color: white;
+}
+#cardContainer{
+	border-radius: 10px;
+	padding: 0px 10px 35px 10px; 
+}
+.row{ overflow: hidden;}
+
+.favDestination {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* 수직 방향 중앙 정렬 */
+    justify-content: center;
+    flex-grow: 1;
+    margin-bottom: 20px;
+    margin-top:20px;
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    width: 100%;
+    height: 100%;
+}
+
+.card-img-top {
+    width: 100%;
+    height: auto;
+    flex-grow: 1;
+}
+
+
+.card-body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    padding-top:0;
+}
+#favContainer{
+	padding-top:0;
+}
+.cardTitle {
+	font-size:15px;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+}
+
+.fav{
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* 수평 방향 중앙 정렬 */
+    justify-content: flex-start; /* 수직 방향 맨 위 정렬 */
+    width: 100%;
+ 	height: 100%; /* 전체 부모 요소를 채우도록 설정 */
+	border-radius: 10px;
+    box-shadow: 5px 5px 5px gray;
+    /* padding: 35px 30px;
+    padding-right: 5px;
+    padding-left: 5px; */
+}
+.fav.img{
+	 width: 100%;
+    height: 100%;
+}
+.fav h5{
+	font-size: 10px;
+}
+.fav-img-top{
+	width: 100%;
+	height: auto;
+	object-fit: cover;
+}
+input, h2, ul, #dayContainer, #planContainer, button, .favDestination{
+	/* font-family: 'Cafe24SsurroundAir' !important; */
+}
+
+.plans{
+	padding: 15px 20px;
+	position: relative;
+	margin-bottom:30px;
+}
+
+.plans.active {
+	background-color: #27334c; /* Change this to your desired color */
+}
+
+
+::after, ::before{
+	box-sizing:border-box;
+}
+
+
+#planContainer h5 {
+	/* font-family: 'Cafe24SsurroundAir';  */
+	font-size: 2rem;
+	margin-bottom: .5em;
+}
+
+.days.click {
+	border-style: inset;
+	border-width: 1px;
+}
+.darkColor {
+     background-color: #27334c;
+}
+
+.brightColor {
+     background-color:white;
+}
+.plans.click{
+	background-color: #27334c;
+	color:white;
+}
+.plans.non-click{
+	background-color: white;
+	color:#27334c;
+}
+
+
+
+.plans::before {
+    content: "";
+    width: 100%;
+    height: 5px;
+    border-radius: 0px;
+    background: #000000;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition: all 0.5s ease 0s;
+}
+
+.days {
+	position: relative;
+}
+
+img.deleteDayImg {
+	width: 30%;
+}
+
+img.collapseImg {
+	width: 60%;
+}
+
+img.deleteFavImg{
+	width: 20%;
+}
+
+.deleteFav{
+	text-align: right;
+}
+
+.link{
+	color: inherit; /* 부모 요소의 색상을 상속 */
+    text-decoration: none; /* 밑줄 제거 */
+}
+
+.name{
+	font-size:20px;
+}
+
+.daySize{
+	font-size: 20px;
+}

@@ -1,0 +1,10 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8" trimDirectiveWhitespaces="true" %>
+<%@ taglib prefix="c" uri = "jakarta.tags.core" %>
+
+<div class="container-header">
+    <a href="/audiro">
+        <c:url var="imgLogo" value="/images/logo30.png" />
+        <img src="${imgLogo}" alt="logo" id="logo" />
+    </a>
+</div>

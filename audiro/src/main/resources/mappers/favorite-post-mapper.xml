@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.audiro.repository.FavoritePostDao">
+    
+    <!-- 좋아요 추가 -->
+    <insert id="insertFavoriteListPost">
+        insert into favorite_post (users_id, post_id)
+        values (
+        		(select users_id from users where id = #{signedInUser}), #{postId}
+        )
+    </insert>
+
+    <!-- 좋아요 삭제 -->
+    <delete id="deleteFavoriteListPost">
+        delete from favorite_post
+        where users_id = (select users_id from users where id = #{signedInUser})
+        and post_id = #{postId}
+    </delete>
+    
+    <!-- 로그인유저의 찜 상태 -->
+    <select id="selectFavoriteListPostState" resultType="integer">	    
+		select fp.favorite_post_id 
+		from favorite_post fp
+		    join users u on fp.users_id = u.users_id
+		where fp.post_id = #{postId}
+		    and u.id = #{userId}
+    </select>
+    
+    <!-- FavoriteUsers 테이블 전체 검색 >> 목록보기 -->
+    <select id="selectFavoritePost" resultType="FavoritePost"> 
+        select fp.users_id, p.title as favoritePostTitle, fp.post_id, fp.created_time
+		from favorite_post fp
+		join post p on fp.post_id = p.post_id
+        <if test="sort != null">
+            <choose>
+                <when test="sort == 'name'">
+                    order by p.title
+                </when>
+                <when test="sort == 'created_time'">
+                    order by fp.created_time desc
+                </when>
+            </choose>
+        </if>
+    </select>
+    
+</mapper>

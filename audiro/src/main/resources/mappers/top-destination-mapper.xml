@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.audiro.repository.TopDestinationDao">
+    
+    <!-- 좋아요 추가 -->
+    <insert id="insertFavorite">
+        insert into favorite_destination (users_id, destination_id)
+        values (
+            (select users_id from users where id = #{signedInUser}),
+            #{travelDestinationId}
+        )
+    </insert>
+
+    <!-- 좋아요 삭제 -->
+    <delete id="deleteFavorite">
+        delete from favorite_destination
+        where users_id = (select users_id from users where id = #{signedInUser})
+        and destination_id = #{travelDestinationId}
+    </delete>
+    
+    <!-- 로그인유저의 찜 상태 -->
+    <select id="selectFavoriteState" resultType="integer">
+    		select fd.destination_id
+		from favorite_destination fd
+		    join users u on fd.users_id = u.users_id
+		where fd.destination_id = #{destinationId}
+		    and u.id = #{userId}
+    </select>
+    
+    <!-- 메인화면 인기여행지 -->
+    <select id="selectTopDestination" resultType="com.audiro.dto.TopDestinationDto"> 
+        with mainTopDestination as (
+		select td.travel_destination_id, td.name, td.address, td.img_url,
+		    count(fd.favorite_destination_id) as num_favorites,
+		    rank() over (order by count(fd.favorite_destination_id) desc) as rank
+		from travel_destination td
+		left join favorite_destination fd on td.travel_destination_id = fd.destination_id
+		group by td.travel_destination_id, td.name, td.address, td.img_url
+		)
+		select travel_destination_id, name, address, img_url, num_favorites, rank
+		from mainTopDestination
+		where rank &lt;=15
+		order by rank, travel_destination_id
+		fetch first 15 rows only
+    </select>
+    
+</mapper>

@@ -1,0 +1,349 @@
+@charset "UTF-8";
+
+		.modal-body {
+			font-size: 15px;
+		}
+		.modal-dialog {
+            top: 10%; 
+            position: absolute;
+            transform: translateX(-50%);
+        }
+        .modal-footer {
+        	font-size: 13px;
+        }
+		.background-image {
+		    margin-top:20px;  
+            background-image: url('../images/main.jpg');
+            background-size: cover; /* 이미지를 요소에 맞게 조정 */
+            background-position: center; /* 이미지를 중앙에 배치 */
+            height: 400px; /* 높이를 필요에 따라 조정 */
+            width: 100%; /* 너비를 100%로 설정 */
+            margin-bottom: 100px;
+            box-shadow: 0 -4px 8px rgba(0, 0, 0.5, 0.2);
+        }
+		.top-title {
+			text-align: center;
+            transform: scale(0.8);
+			font-family: 'Jalnan'; 
+			/*font-family: 'HSBomBaram2';*/
+			margin-top: 100px; /* 위 여백을 50px로 설정; */
+			margin-bottom: 30px;
+		}
+		.wrap {
+            display: flex;
+            overflow: hidden;
+            margin-top: 0px;
+        }
+        
+        .wrap .rolling-list ul {
+            display:flex;
+            list-style-type: none; /* 첫번째 사진과 마지막 사진 사이 여백= 0 */
+            padding: 0; /* 첫번째 사진과 마지막 사진 사이 여백= 0 */
+        }
+        .wrap .rolling-list ul li { 
+            width: 400px; 
+            height: 300px; 
+            box-sizing: border-box; 
+            border-radius: 0px; 
+            margin: 0 5px; 
+            padding: 0px 0px; 
+            display: flex; 
+            align-items: center; 
+            flex-shrink: 0; 
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .rolling-list.original {
+            animation: rollingleft1 60s linear infinite;
+        }
+        .rolling-list.clone {
+            animation: rollingleft2 60s linear infinite;
+        }
+        @keyframes rollingleft1 {
+            0% { transform: translateX(0); }
+            50% { transform: translateX(-100%); }
+            50.01% { transform: translateX(100%); }
+            100% { transform: translateX(0); }
+        }
+        @keyframes rollingleft2 {
+            0% { transition: translateX(0); }
+            100% { transform: translateX(-200%); }
+        }
+        .image-wrap {
+            width: 100%;
+            height: 100%;
+            border-radius: 0px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .image-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .image-title {
+        	font-family: 'BMHannaAir';
+            font-size: 17px;
+            font-weight: bold;
+            position: absolute;
+            bottom: 30px;
+            left: 20px;
+            color: white;
+            text-shadow: 1px 1px 2px black;
+            z-index: 1;
+        }
+        
+        .image-descript {
+        		font-family: 'BMHannaAir';
+            font-size: 15px;
+            position: absolute;
+            bottom: 2px;
+            left: 20px;
+            color: white;
+            text-shadow: 1px 1px 2px black;
+            z-index: 1;
+        }
+        
+        .carousel-image {
+        		transition: all 0.3s ease-in-out; /* 부드러운 전환 효과 */
+            width: 300px;
+            max-width: 500px; /* 최대 너비 제한 */
+     		cursor: pointer; 
+            height: 350px;
+            border-radius: 0 10px 10px 10px;
+            overflow: hidden;
+            position: relative;
+            margin: 10px 10px; /* 이미지 간 여백 조정 */
+          	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+          	border: 1px solid gray; /* 테두리 추가 */
+           	
+          	
+        }
+        .carousel-image:hover {
+		    width: 50%; /* 호버 시 너비 증가 */
+            filter: brightness(1);
+		    color: black;
+		}
+		.carousel-image:hover #destination-name {
+		    color: white; /* 호버 시 더 밝아지는 색상 */
+		  	/* text-shadow: -1px 0px black, 0px 1px black, 1px 0px black, 0px -1px black */;
+		}
+
+
+		#destination-name {
+			position: absolute;
+			top:10px;
+			left: 20%; /* 수평 중앙 정렬 */
+			color: white;
+			padding: 5px;
+			/* font-family: "Nanum Gothic Coding", monospace; */
+			font-family: 'BMHannaAir';
+			font-size: 18px;
+    		font-weight: bold;
+    		text-shadow: 0.5px 0.5px 0 #000, -0.5px -0.5px 0 #000, 0.5px -0.5px 0 #000, -0.5px 0.5px 0 #000;
+		}
+		
+       .my-card {
+            width: 300px;
+            min-width: 300px;
+            height: 350px;
+            border-radius: 0 10px 10px 10px;
+            background: rgba(255, 255, 255, 0.5);
+            overflow: hidden;
+            position: relative;
+            margin: 10px 10px; /* 이미지 간 여백 조정 */
+           	border: 1px solid gray; /* 테두리 추가 */
+           	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .my-card:hover {
+        	transform: scale(1.05); /* 카드 크기 확대 */
+	    	box-shadow: 0 5px 5px rgba(0, 0, 0, 0.2); /* 그림자 추가 */
+        }
+        #post-title {
+		    font-size: 20px;
+		    font-weight: bold;
+		    position: absolute;
+		    top: 70px;
+		    left: 20px;
+		    color: navy;
+		    z-index: 1;
+		    padding: 5px; /* 내부 여백 설정 */ 
+		    cursor: pointer; 
+		}
+		
+		#post-content {	
+		    font-size: 15px;
+		    font-weight: bold;
+		    position: absolute;
+		    top: 110px; 
+		    left: 20px; 
+		    color: black;
+		    z-index: 1;
+		    padding: 5px; /* 내부 여백 설정 */	
+		    cursor: pointer;	    
+		}
+           
+        .carousel-image img {
+            width: 100%;
+            height: 100%;
+            /* object-fit: contain;  이미지가 잘리지 않고 축소됨 */
+            object-fit: cover; 
+            display: block;
+            align-self: flex-end;
+        }
+        
+        .carousel-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .top-rank {
+            font-size: 13px;   
+            position: absolute;
+            border-radius: 10px;
+            color: white;
+            z-index: 1;
+            padding: 7px; /* 내부 여백 설정 */
+            background-color: transparent;
+        }
+        .top-rank::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 70px; 
+            height: 70px;
+            background-color: #B22222;   
+            clip-path: polygon(0 0, 80% 0, 80% 85%, 50% 70%, 0 100%);
+            border: 2px solid white; /* 하얀색 테두리 */
+            box-sizing: border-box;
+     		display: inline-block;
+            z-index: -1;
+            box-shadow: -5px -5px 10px rgba(0, 0, 0, 0.5); /* 왼쪽 위로 그림자 추가 */
+        }
+        .top-rank:hover::before {
+		    transition: transform 0.3s ease, box-shadow 0.3s ease; /* 애니메이션 효과 추가 */
+		}
+		.carousel-image .num-favorites-dest {
+		    position: absolute;
+		    top: 35px; /* 좋아요 버튼 아래에 위치하도록 합니다 */
+		    right: 26px;
+		    color: white;
+		    font-size: 20px;
+		    font-weight: bold;
+		    text-shadow: 0.5px 0.5px 0 #000, -0.5px -0.5px 0 #000, 0.5px -0.5px 0 #000, -0.5px 0.5px 0 #000;
+		}
+		.num-favorites-post {
+		    position: absolute;
+		    top: 35px; /* 좋아요 버튼 아래에 위치하도록 합니다 */
+		    right: 28px;
+		    color: black;
+		    font-size: 20px;
+		    font-weight: bold;
+		}
+        .like {
+            position: absolute;         
+            top: 10px;
+            right: 20px;
+            width: 25px; 
+            height: 25px;
+        }
+        #post-like {
+		    position: absolute;
+		    top: 10px;
+		    right: 20px;
+		    width: 25px;
+		    height: 25px;
+		}
+		
+		#post-like img {
+		    width: 100%;
+		    height: 100%;
+		}
+        
+        #heart-animation {
+            position: fixed;
+            top: 20%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: none;
+            z-index: 1000;
+        }
+        
+        #heart-animation img {
+            width: 100px; /* 적절한 크기로 설정 */
+            opacity: 0;
+            animation: fadeInOut 2s forwards;
+        }    
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateY(0%) rotate(0deg); }
+            25% { opacity: 1; transform: translateY(-30%) rotate(-5deg); }
+            50% { opacity: 1; transform: translateY(-60%) rotate(5deg); }
+            75% { opacity: 0.5; transform: translateY(-90%) rotate(-5deg); }
+            100% { opacity: 0; transform: translateY(-120%) rotate(5deg); }
+        }
+		@keyframes grow { 
+			0% { transform: scale(1); }
+		    50% { transform: scale(1.5); }
+		    100% { transform: scale(1); }
+		}
+		
+		.like-animation {
+		    animation: grow 0.3s ease-in-out;
+		}
+		#destinationCarousel, #postCarousel {
+			margin-bottom: 100px;
+		}
+		.carousel-controls {
+		    position: absolute;
+		    top: 50%;
+		    width: 100%;
+		    display: flex;
+		    justify-content: space-between;
+		    transform: translateY(-50%);
+		}
+		.carousel-control-btn {
+		    background-color: transparent; /* 배경 투명 */
+		    border: none;
+		    color: black; 
+		    display: flex;
+		    align-items: center;
+		    justify-content: center;
+		    transition: color 0.3s ease;
+		}
+		.carousel-control-btn.prev {
+		    left: 60px; /* 왼쪽 버튼 위치 */
+		    position: absolute
+		}
+		
+		.carousel-control-btn.next {
+		    right: 60px; /* 오른쪽 버튼 위치 */
+		    position: absolute
+		}
+		.carousel-control-btn:hover {
+		    transform: scale(1.5);
+		}
+		  
+		.carousel-indicators [data-bs-target] {
+		    background-color: #808080 !important; 
+		}
+		.carousel-indicators .active {
+		    background-color: #000000 !important; 
+		} 
+		.carousel {
+		    position: relative;
+		}
+		.carousel-inner {
+		    position: relative;
+		}
+		
+		.carousel-indicators {
+		    margin-top: 10px;
+		    display: flex;
+		    justify-content: center;
+		}

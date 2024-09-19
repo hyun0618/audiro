@@ -1,0 +1,80 @@
+@charset "UTF-8";
+
+.timeline {
+	max-width: 1024px;
+	width: 90%;
+	margin: 0 auto;
+	overflow: visible; /* overflow visible 추가 */
+}
+
+.timeline ul {
+	/* font-family: 'Cafe24SsurroundAir'; */
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	position: relative;
+	transition: all 0.5s linear;
+	top: 0;
+	text-align: left;
+}
+
+.list {
+	padding: 3em 2em 2em;
+	margin-top: 0;
+    margin-bottom: 0;
+	position: relative;
+	border-left: 2px solid ; 
+	/* color: rgba(246, 241, 180, 1); */
+	margin-left: 10px;
+	overflow: visible; /* overflow visible 추가 */
+	
+	/* 원의 위치 조정 */
+    padding-left: 20px; /* 원의 가운데 위치를 조정할 수 있는 여유 공간을 마련합니다 */
+}
+
+.darkColor .name{
+	color: white;
+}
+.brightColor .name{
+	color: #27334c;
+}
+
+
+.list.my-1 {
+    margin: 0; /* 원하는 마진값으로 설정 */
+}
+/* .list .name{
+	color:black
+} */
+
+.list::before {   
+	content: attr(date-is);
+	position: absolute;
+	left: -18px; /* 원의 가운데 위치를 맞추기 위해 왼쪽으로 이동합니다 */
+	left: 2em;
+	font-weight: bold;
+	top: 1em;
+	display: block;
+	font-family: 'Roboto', sans-serif;
+	font-weight: 700;
+	font-size: .785rem;
+}
+
+.list::after {
+	width: 10px;
+	height: 10px;
+	display: block;
+	top: 1em;
+	position: absolute;
+	left: -27px; /* 원의 가운데 위치를 맞추기 위해 왼쪽으로 이동합니다 */
+	left: -7px;
+	border-radius: 50%;
+	content: '';
+	border: 2px solid;
+	background: white;
+	overflow: visible; /* overflow visible 추가 */
+}
+
+.list:last-child {
+	border-image: linear-gradient(to bottom, purple 60%, #F6F1B4 100%);
+}

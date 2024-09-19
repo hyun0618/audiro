@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.audiro.repository.CommentDao">
+
+	<!-- 모든 댓글 목록 불러오기 -->
+	<select id="selectByCommentsId" resultType="Comment">
+        select 
+        	c.comments_id 
+        	,c.post_id
+        	,c.content 
+        	,c.modified_time 
+        	,c.is_private
+        	,c.parent_comment_id
+        	,u.nickname 
+        	,p.path
+        from comments c
+        left join users u  on c.users_id = u.users_id
+        left join profile p on c.users_id = p.users_id
+        where post_id =#{postId}
+        order by comments_id desc
+    </select>
+    
+    <!-- 대댓글추가 -->
+    <insert id="insert" parameterType="com.audiro.dto.CommentCreateDto">
+        insert into comments (post_id, users_id, content, parent_comment_id)
+        select #{postId}, #{usersId}, #{content}, #{parentCommentId}
+        from users u
+    	where u.id = #{id}
+    </insert> 
+    
+    <!-- 새 댓글 추가 -->
+	<insert id="newInsert" parameterType="com.audiro.dto.CommentCreateDto">
+	    insert into comments (post_id, users_id, content)
+	    select #{postId}, u.users_id, #{content}
+	    from users u
+	    where u.users_id = #{usersId}
+	</insert>
+
+    
+    <!-- 댓글수정 -->
+    <update id="update">
+        update comments
+        set content = #{content}, modified_time = systimestamp
+        where comments_id = #{commentsId}
+    </update>
+    <!-- 댓글 삭제 -->
+    <delete id="deleteById">
+        delete from comments where comments_id = #{commentsId}
+    </delete>
+    
+    <delete id="deleteByPostId">
+        delete from comments where post_id = #{postId}
+    </delete>
+    
+    <select id="selectCommentCount" resultType="integer">
+        select count(*) from comments where post_id = #{postId}
+    </select>
+    
+    <select id="selectById" resultType="Comment">
+        select * from comments where comments_id = #{commentsId}
+    </select>
+    
+
+</mapper>

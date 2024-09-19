@@ -1,0 +1,24 @@
+@charset "UTF-8";
+
+#heart-animation {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: none;
+    z-index: 1000;
+}
+        
+#heart-animation img {
+    width: 100px;
+    opacity: 0;
+    animation: fadeInOut 2s forwards;
+}
+        
+@keyframes fadeInOut {
+    0% { opacity: 0; transform: translateY(0%) rotate(0deg); }
+    25% { opacity: 1; transform: translateY(-30%) rotate(-5deg); }
+    50% { opacity: 1; transform: translateY(-60%) rotate(5deg); }
+    75% { opacity: 0.5; transform: translateY(-90%) rotate(-5deg); }
+    100% { opacity: 0; transform: translateY(-120%) rotate(5deg); }
+}

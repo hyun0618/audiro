@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.audiro.repository.FavoriteDestinationDao">
+    
+    <!-- 좋아요 추가 -->
+    <insert id="insertFavoriteListDest">
+        insert into favorite_destination (users_id, destination_id)
+        values (
+        		(select users_id from users where id = #{signedInUser}), #{destinationId}
+        )
+    </insert>
+
+    <!-- 좋아요 삭제 -->
+    <delete id="deleteFavoriteListDest">
+        delete from favorite_destination
+        where users_id = (select users_id from users where id = #{signedInUser})
+        and destination_id = #{destinationId}
+    </delete>
+    
+    <!-- 로그인유저의 찜 상태 -->
+    <select id="selectFavoriteListDestState" resultType="integer">
+    		select fd.favorite_destination_id 
+		from favorite_destination fd
+		    join users u on fd.users_id = u.users_id
+		where fd.destination_id = #{destinationId}
+		    and u.id = #{userId}
+    </select>
+    
+    <!-- FavoriteDestination 테이블 전체 검색 >> 목록보기 -->
+    <select id="selectFavoriteDestination" resultType="FavoriteDestination">
+        select fd.users_id, td.name as favoriteDestination, td.img_url, fd.destination_id, fd.created_time
+        from favorite_destination fd
+        join travel_destination td on fd.destination_id = td.travel_destination_id
+        <if test="sort != null">
+            <choose>
+                <when test="sort == 'name'">
+                    order by td.name
+                </when>
+                <when test="sort == 'created_time'">
+                    order by fd.created_time desc
+                </when>
+            </choose>
+        </if>
+    </select>
+    
+	<!-- 찜한 여행지 불러오기 -->
+	<select id="selectAllOrderById" resultType="FavoriteDestinationDto">
+		select f.*, t.name, t.img_url from favorite_destination f
+		join travel_destination t
+		on f.destination_id = t.travel_destination_id
+		where f.users_id = #{usersId}
+		order by favorite_destination_id
+	</select>
+	
+	<select id="selectById" resultType="FavoriteDestinationDto">
+		select f.*, t.name, t.img_url from favorite_destination f
+		join travel_destination t
+		on f.destination_id = t.travel_destination_id
+		where f.favorite_destination_id = #{favorite_destination_id}
+	</select>
+	
+</mapper>
