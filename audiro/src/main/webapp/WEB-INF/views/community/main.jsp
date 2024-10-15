@@ -55,247 +55,44 @@
         <%@ include file="../fragments/header.jspf"%>
         </div>
     <div class="container">
-    <!-- 전체 콘텐츠를 감싸는 컨테이너, 상단 마진을 추가합니다. -->
-<div class="container mt-5 ms-5">
-    <!-- 그리드 시스템의 행(row)을 정의합니다. -->
-    <div class="row">
-        <!-- 캐러셀 -->
-        <div class="col-md-8">
-            <div id="carouselExample" class="carousel slide" data-bs-ride="carousel">
-                <!-- 캐러셀 인디케이터 (하단의 동그라미) -->
-                <div class="carousel-indicators">
-                    <button type="button" data-bs-target="#carouselExample" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-                    <button type="button" data-bs-target="#carouselExample" data-bs-slide-to="1" aria-label="Slide 2"></button>
-                    <button type="button" data-bs-target="#carouselExample" data-bs-slide-to="2" aria-label="Slide 3"></button>
-                </div>
-                <!-- 캐러셀 아이템을 포함하는 div -->
-                <div class="carousel-inner">
-                    <!-- 첫 번째 캐러셀 아이템: 동영상 -->
-                    <div class="carousel-item active">
-                        <c:url var="logo1" value="/images/3_.gif"></c:url>
-                        <img src="${logo1}" class="d-block w-100 img-fluid" alt="Image 1"/>                   
-                    </div>
-                    <!-- 두 번째 캐러셀 아이템: 이미지 -->
-                    <div class="carousel-item">
-                        <c:url var="logo2" value="/images/2_.gif"></c:url>
-                        <img src="${logo2}" class="d-block w-100 img-fluid" alt="Image 2"/>
-                    </div>
-                    <!-- 세 번째 캐러셀 아이템: 이미지 -->
-                    <div class="carousel-item">
-                        <c:url var="logo3" value="/images/1_.gif"></c:url>
-                        <img src="${logo3}" class="d-block w-100 img-fluid" alt="Image 3"/>
-                    </div>
-                </div>
-                <!-- 이전 버튼 -->
-                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Previous</span>
-                </button>
-                <!-- 다음 버튼 -->
-                <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Next</span>
-                </button>
-            </div>
-            <!-- Bootstrap 캐러셀 컴포넌트 끝 -->
-        </div>
-        <!-- 아코디언 섹션, 화면 크기가 md 이상일 때 3칸을 차지합니다. -->
-        <div class="col-md-3">
-            <!-- Bootstrap 아코디언 컴포넌트 시작 -->
-            <div class="accordion" id="accordionExample">
-                <!-- 첫 번째 아코디언 아이템 -->
-                <div class="accordion-item">
-                    <!-- 아코디언 헤더 -->
-                    <h2 class="accordion-header" id="headingOne">
-                        <button class="accordion-button collapsed"  data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                            💗 LIKE USER TOP3
-                        </button>
-                    </h2>
-                    <!-- 아코디언 내용 -->
-                    <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
-                        <div class="accordion-body">
-                            <!-- 순위 테이블 시작 -->
-                            <table class="table table-hover" style="margin: 0 auto;">
-                                <thead class="table table-light">
-                                    <tr>
-                                        <th class="text-center">순위</th>
-                                        <th class="text-center">닉네임</th>
-                                        <th class="text-center">💘</th>
-                                    </tr>
-                                </thead>
-                                <!-- rank가 1인 경우 행을 강조 -->
-                                <c:forEach var="like" items="${userLikeTop3List}">
-                                    <tbody>
-                                        <c:choose>
-                                            <c:when test="${like.rank == 1}">
-                                                <tr class="table-primary">
-                                                    <td class="text-center">🐳</td>
-                                                    <td class="text-center">${like.nickname}</td>
-                                                    <td class="text-center">${like.count}</td>
-                                                </tr>
-                                            </c:when>
-                                            <c:otherwise>
-                                                <tr>
-                                                    <td class="text-center">${like.rank}</td>
-                                                    <td class="text-center">${like.nickname}</td>
-                                                    <td class="text-center">${like.count}</td>
-                                                </tr>
-                                            </c:otherwise>
-                                        </c:choose>
-                                    </tbody>
-                                </c:forEach>
-                            </table>
-                            <!-- 순위 테이블 끝 -->
-                        </div>
-                    </div>
-                </div>
-                <!-- 두 번째 아코디언 아이템 -->
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="headingTwo">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                            👍🏻 POST TOP3
-                        </button>
-                    </h2>
-                    <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
-                        <div class="accordion-body">
-                            <!-- 순위 테이블 시작 -->
-                            <table class="table table-hover" style="margin: 0 auto;">
-                                <thead class="table table-light">
-                                    <tr>
-                                        <th class="text-center">순위</th>
-                                        <th class="text-center">title</th>
-                                        <th class="text-center">👍🏻</th>
-                                    </tr>
-                                </thead>
-                                <!-- rank가 1인 경우 행을 강조 -->
-                                <c:forEach var="pg" items="${postGoodTop3List}">
-                                    <tbody>
-                                        <c:choose>
-                                            <c:when test="${pg.rank == 1}">
-                                                <tr class="table-primary">
-                                                    <td class="text-center">🐳</td>
-                                                    <td class="text-center">${pg.title}</td>
-                                                    <td class="text-center">${pg.good}</td>
-                                                </tr>
-                                            </c:when>
-                                            <c:otherwise>
-                                                <tr>
-                                                    <td class="text-center">${pg.rank}</td>
-                                                    <td class="text-center">${pg.title}</td>
-                                                    <td class="text-center">${pg.good}</td>
-                                                </tr>
-                                            </c:otherwise>
-                                        </c:choose>
-                                    </tbody>
-                                </c:forEach>
-                            </table>
-                            <!-- 순위 테이블 끝 -->
-                        </div>
-                    </div>
-                </div>
-                <!-- 세 번째 아코디언 아이템 -->
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="headingThree">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                            💬 COMMENT TOP3
-                        </button>
-                    </h2>
-                    <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
-                        <div class="accordion-body">
-                            <!-- 순위 테이블 시작 -->
-                            <table class="table table-hover" style="margin: 0 auto;">
-                                <thead class="table table-light">
-                                    <tr>
-                                        <th class="text-center">순위</th>
-                                        <th class="text-center">닉네임</th>
-                                        <th class="text-center">&#128221;</th>
-                                    </tr>
-                                </thead>
-                                <!-- rank가 1인 경우 행을 강조 -->
-                                <c:forEach var="cu" items="${commentsUserTop3}">
-                                    <tbody>
-                                        <c:choose>
-                                            <c:when test="${cu.rank == 1}">
-                                                <tr class="table-primary">
-                                                    <td class="text-center">🐳</td>
-                                                    <td class="text-center">${cu.nickname}</td>
-                                                    <td class="text-center">${cu.count}</td>
-                                                </tr>
-                                            </c:when>
-                                            <c:otherwise>
-                                                <tr>
-                                                    <td class="text-center">${cu.rank}</td>
-                                                    <td class="text-center">${cu.nickname}</td>
-                                                    <td class="text-center">${cu.count}</td>
-                                                </tr>
-                                            </c:otherwise>
-                                        </c:choose>
-                                    </tbody>
-                                </c:forEach>
-                            </table>
-                            <!-- 순위 테이블 끝 -->
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Bootstrap 아코디언 컴포넌트 끝 -->
-        </div>
-    </div>
-</div>
 
-    
-    <div class="mt-5 ms-3">
-        <p style="font-size: 1.5rem;">💌 Bulletn Board</p> 
-    </div>
 
-<!--탭 시작-->
+
+
+
 <div class="mt-4 ms-3">
-    <ul class="nav nav-tabs mt-2" role="tablist">
-        <li class="nav-item" role="presentation">
-          <a class="nav-link active" data-bs-toggle="tab" href="#all" aria-selected="true" role="tab">전체</a>
-        </li>
-        <li class="nav-item" role="presentation">
-          <a class="nav-link" data-bs-toggle="tab" href="#mate" aria-selected="false" tabindex="-1" role="tab" aria-controls="mate">여행메이트</a>
-        </li>
-        <li class="nav-item" role="presentation">
-            <a class="nav-link" data-bs-toggle="tab" href="#free" aria-selected="false" tabindex="-1" role="tab" aria-controls="free">자유게시판</a>
-          </li>
-          <li class="nav-item" role="presentation">
-             <a class="nav-link disabled" data-bs-toggle="tab" href="#search" aria-selected="false" tabindex="-1" role="tab">검색 결과</a>
-          </li>
-        <c:url var="writing" value="/community/create">
-            <c:param name="id" value="${signedInUser}"></c:param>
-        </c:url>
-        <a href="${writing}" class="btn btn-outline-primary ms-2 mb-1">글쓰기</a> 
-        <!--검색옵션 시작-->      
-        <div class="col-1 ms-5 me-2">
+	<div class="row d-flex justify-content-center">
+        <div class="col-auto">
             <select class="form-control" name="category1">
                 <option value="mf">전체</option>
                 <option value="m">여행메이트</option>
                 <option value="f">자유게시판</option>
             </select>
         </div>
-        <div class="col-1 me-2">
+        <div class="col-auto">
             <select class="form-control" name="category2">
                 <option value="t">제목</option>
                 <option value="c">내용</option>
                 <option value="tc">제목+내용</option>
-                <!-- and 조건이 아닌 or 조건으로 검색 -->
                 <option value="a">닉네임</option>
             </select>
         </div>
-        <!-- 검색 옵션 끝 -->
-        <!--검색 시작-->
-        <div class="d-flex me-2 mb-1">
-        
-                <input id="inputSearch" class="form-control me-sm-2 col-10" type="search" placeholder="커뮤니티 검색" required>
-                <button  id="btnSearch" class="btn btn-primary my-2 my-sm-0" type="submit">Search</button>
-        
+
+        <div class="col-auto">
+        	<input id="inputSearch" class="form-control me-sm-2 col-10" type="search" placeholder="검색어 입력" required>
         </div>
-        <!--검색 끝-->
-      </ul> 
-      <!--탭버튼 끝-->
-      <!--탭콘텐츠시작-->
+        <div class="col-auto">
+        	<button  id="btnSearch" class="btn btn-primary my-2 my-sm-0" type="submit">Search</button>
+        </div>
+        <div class="col-auto">
+	        <c:url var="writing" value="/community/create">
+	            <c:param name="id" value="${signedInUser}"></c:param>
+	        </c:url>
+	        <a href="${writing}" class="btn btn-outline-primary ms-2 mb-1">글쓰기</a> 
+        </div>
+   	</div>
+
+
       <div id="myTabContent" class="tab-content">
       <!-- 전체 탭 내용 시작 -->
         <div class="tab-pane fade show active" id="all" role="tabpanel">

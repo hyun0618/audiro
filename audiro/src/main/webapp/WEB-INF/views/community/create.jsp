@@ -88,219 +88,7 @@
      <!-- 맨 위에 뜨는 nav끝 -->    
         <!-- **** row 클래스를 사용하여 두 섹션을 가로로 배치합니다. **** -->
         <div class="row">
-            <!-- 사이드 메뉴 -->
-            <!-- **** col-md-4와 col-lg-3 클래스를 사용하여 반응형 너비를 설정합니다. **** -->
-            <div class="col-md-4 col-lg-3 mb-3">
-                <div class="card mb-3">
-                    <h3 class="card-header p-3"
-                        style="background-color:#c8dff3; text-align: center;">COMMUNITY</h3>
-                    <div class="card-body">
-                     <!--   <h4 class="card-title m-1"
-                            style="text-align: center;">writing</h4>
-                        <h6 class="card-subtitle text-muted p-2"
-                            style="text-align: center;">You guys write a lot.</h6>
-                        <img
-                            style="display: block; margin: 0 auto; width: 100%;"
-                            src="../images/create.png" alt="글 작성">  --> 
-                    </div>
-                    <div class="card-body">
-                        <p class="ps-3 pe-3" style="text-align: center;">
-                            “ 글을 많이 많이 작성해요 !! ”<br />#글쓰기
-                        </p>
-                    </div>
-
-
-                    <ul class="list-group list-group-flush">
-                        <c:url var="main" value="/community/main">
-                            <c:param name="id" value="${signedInUser}"></c:param>
-                        </c:url>
-                        <li class="list-group-item">
-                            <a style="text-decoration: none;" href="${main}">커뮤니티 메인</a>
-                        </li>
-                        <c:url var="alllist" value="/community/alllist">
-                            <c:param name="id" value="${signedInUser}"></c:param>
-                        </c:url>
-                        <li class="list-group-item">
-                            <a style="text-decoration: none;" href="${alllist}">전체 목록</a>
-                        </li>
-                        <c:url var="matelist" value="/community/matelist">
-                            <c:param name="id" value="${signedInUser}"></c:param>
-                        </c:url>                        
-                        <li class="list-group-item">
-                            <a style="text-decoration: none;" href="${matelist}">여행 메이트</a>
-                        </li>
-                        <c:url var="freelist" value="/community/freelist">
-                            <c:param name="id" value="${signedInUser}"></c:param>
-                        </c:url>
-                        <li class="list-group-item">
-                            <a style="text-decoration: none;" href="${freelist}">자유게시판</a>     
-                        </li>
-                        <c:url var="create" value="/community/create">
-                            <c:param name="id" value="${signedInUser}"></c:param>
-                        </c:url>                      
-                        <li class="list-group-item">
-                            <a style="text-decoration: none;" href="${create}">글쓰기</a>     
-                        </li>
-                    </ul>
-                    <div class="card-body">
-                        <c:url var="home" value="/"></c:url>
-                        <a style="text-decoration: none;" href="${home}"
-                            class="card-link p-2">#어디로 메인</a> 
-                        <c:url var="tp" value="/travel/plan" />
-                            <a
-                            style="text-decoration: none;" href="${tp}"
-                            class="card-link p-2">#여행지 찾기</a> <br /> 
-                        <c:url var="tpl" value="/travel/plan/list" />
-                            <a
-                            style="text-decoration: none;" href="${tpl}"
-                            class="card-link p-2">#여행
-                            계획&nbsp;&nbsp;&nbsp;</a> 
-                            <c:url var="trp" value="/post/review/list" />
-                            <a href="${trp}"
-                            style="text-decoration: none;"
-                            class="card-link p-2">#여행 후기</a>
-                    </div>
-                   
-                </div>
-                <!-- 랭킹 시작 -->
-                <div class="card">
-                    <div class="card-header m-1">
-                        <h4 class="card-title"
-                            style="text-align: center;">Community
-                            Ranking</h4>
-                    </div>
-                    <div class="card-body">
-                        <p style="text-align: center;">💗 LIKE USER
-                            TOP3</p>
-                        <table class="table table-hover"
-                            style="margin: 0 auto;">
-                            <thead class="table table-light">
-                                <tr>
-                                    <th class="text-center">순위</th>
-                                    <th class="text-center">닉네임</th>
-                                    <th class="text-center">💘</th>
-                                </tr>
-                            </thead>
-                            <!-- rank == 1 이면 형광펜으로 칠함. -->
-                            <c:forEach var="like"
-                                items="${userLikeTop3List}">
-                                <tbody>
-                                    <c:choose>
-                                        <c:when test="${like.rank == 1}">
-                                            <tr class="table-primary">
-                                                <td class="text-center">🐬</td>
-                                                <td class="text-center">${like.nickname}</td>
-                                                <td class="text-center">${like.count}</td>
-                                            </tr>
-                                        </c:when>
-                                        <c:when test="${like.rank == 2}">
-                                            <tr>
-                                                <td class="text-center">${like.rank}</td>
-                                                <td class="text-center">${like.nickname}</td>
-                                                <td class="text-center">${like.count}</td>
-                                            </tr>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <tr>
-                                                <td class="text-center">${like.rank}</td>
-                                                <td class="text-center">${like.nickname}</td>
-                                                <td class="text-center">${like.count}</td>
-                                            <tr>
-                                        </c:otherwise>
-                                    </c:choose>
-                                </tbody>
-                            </c:forEach>
-                        </table>
-                        <!-- post 순위 -->
-                        <p class="mt-3 pt-2" style="text-align: center;">👍🏻
-                            POST TOP3</p>
-                        <table class="table table-hover"
-                            style="margin: 0 auto;">
-                            <thead class="table table-light">
-                                <tr>
-                                    <th class="text-center">순위</th>
-                                    <th class="text-center">제목</th>
-                                    <th class="text-center">👍🏻</th>
-                                </tr>
-                            </thead>
-                            <!-- rank == 1 이면 형광펜으로 칠함. -->
-                            <c:forEach var="pg"
-                                items="${postGoodTop3List}">
-                                <tbody>
-                                    <c:choose>
-                                        <c:when test="${pg.rank == 1}">
-                                            <tr class="table-primary">
-                                                <td class="text-center">🐬</td>
-                                                <td class="text-center">${pg.title}</td>
-                                                <td class="text-center">${pg.good}</td>
-                                            </tr>
-                                        </c:when>
-                                        <c:when test="${pg.rank == 2}">
-                                            <tr>
-                                                <td class="text-center">${pg.rank}</td>
-                                                <td class="text-center">${pg.title}</td>
-                                                <td class="text-center">${pg.good}</td>
-                                            </tr>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <tr>
-                                                <td class="text-center">${pg.rank}</td>
-                                                <td class="text-center">${pg.title}</td>
-                                                <td class="text-center">${pg.good}</td>
-                                            <tr>
-                                        </c:otherwise>
-                                    </c:choose>
-                                </tbody>
-                            </c:forEach>
-                        </table>
-                        <!-- post 순위 끝 -->
-                        <!-- comment 순위 -->
-                        <p class="mt-3 pt-2" style="text-align: center;">💬
-                            COMMENT TOP3</p>
-                        <table class="table table-hover"
-                            style="margin: 0 auto;">
-                            <thead class="table table-light">
-                                <tr>
-                                    <th class="text-center">순위</th>
-                                    <th class="text-center">닉네임</th>
-                                    <th class="text-center">📑</th>
-                                </tr>
-                            </thead>
-                            <!-- rank == 1 이면 형광펜으로 칠함. -->
-                            <c:forEach var="cu"
-                                items="${commentsUserTop3}">
-                                <tbody>
-                                    <c:choose>
-                                        <c:when test="${cu.rank == 1}">
-                                            <tr class="table-primary">
-                                                <td class="text-center">🐬</td>
-                                                <td class="text-center">${cu.nickname}</td>
-                                                <td class="text-center">${cu.count}</td>
-                                            </tr>
-                                        </c:when>
-                                        <c:when test="${cu.rank == 2}">
-                                            <tr>
-                                                <td class="text-center">${cu.rank}</td>
-                                                <td class="text-center">${cu.nickname}</td>
-                                                <td class="text-center">${cu.count}</td>
-                                            </tr>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <tr>
-                                                <td class="text-center">${cu.rank}</td>
-                                                <td class="text-center">${cu.nickname}</td>
-                                                <td class="text-center">${cu.count}</td>
-                                            <tr>
-                                        </c:otherwise>
-                                    </c:choose>
-                                </tbody>
-                            </c:forEach>
-                        </table>
-                        <!-- comment 순위 끝-->
-                    </div>
-                </div>
-                <!-- 랭킹 끝 -->
-            </div>
+           
 
             <!-- 상세보기 -->
             <!-- **** col-md-8와 col-lg-9 클래스를 사용하여 반응형 너비를 설정합니다. **** -->
@@ -513,19 +301,23 @@ function showAlert() {
     document.addEventListener('DOMContentLoaded', function() {
         // 'selectForm'이라는 ID를 가진 폼 요소에 'submit' 이벤트 리스너를 추가합니다.
         document.getElementById('selectForm').addEventListener('submit', function(event) {
+        	
+        	
             // 'PostTypeId'라는 ID를 가진 선택 요소를 가져옵니다.
-            var select = document.getElementById('PostTypeId');
+            // var select = document.getElementById('PostTypeId');
+            
+            
             // 'title'이라는 이름을 가진 입력 요소를 가져옵니다.
             var title = document.querySelector('input[name="title"]');
             // Quill 에디터의 내용을 가져옵니다.
             var content = document.querySelector('#editor .ql-editor').innerHTML;
 
             // 선택된 값이 비어 있는 경우 (게시판 선택이 안 된 경우)
-            if (select.value === "") {
+            /* if (select.value === "") {
                 event.preventDefault(); // 폼 제출을 막습니다.
                 alert("게시판을 선택해 주세요."); // 사용자에게 경고 메시지를 표시합니다.
                 return false; // 추가적인 동작을 방지하기 위해 false를 반환합니다.
-            }
+            } */
 
             // 제목이 비어 있는 경우
             if (title.value.trim() === "") {

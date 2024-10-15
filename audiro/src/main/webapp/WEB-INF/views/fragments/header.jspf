@@ -59,9 +59,9 @@
 </head>
    <nav class="navbar navbar-expand-lg" id="nav-user">
         <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        
             <ul class="navbar-nav me-4 mx-auto"> 
-            		<%-- 세션에 로그인 정보가 없는 경우 --%>
-            		<c:if test="${empty signedInUser}">       
+            	            		<c:if test="${empty signedInUser}">       
 	                <li class="nav-item">
 	                    <c:url var="signInPage" value="/user/signin" />
 	                    <a class="nav-link" href="${signInPage}">로그인</a>
@@ -71,9 +71,7 @@
 	                    <a class="nav-link" href="${signUpPage}">회원가입</a>
 	                </li> 
 	            </c:if>
-	            <%-- 로그인 정보가 세션에 저장된 경우 --%>
-                <%-- not empty = not null and length > 0 --%>
-                <%-- empty = null or length = 0 --%>
+	     
                 <c:if test="${not empty signedInUser}">
 	                <li class="nav-item">
 	                    <c:url var="favoritePage" value="/favorite/list" />
@@ -96,51 +94,53 @@
     </nav>
     
     <nav class="navbar navbar-expand-lg" id="nav-main">
-    <div class="container">
-        <c:url var="audiroPage" value="/" />     
-        <a class="navbar-brand" href="${audiroPage}">
-        		<c:url var="audiroLogo" value="/images/logo30.png" />
-        		<img src="${audiroLogo}" alt="logo" width="150" height="50" class="navbar-logo"/>
-       	</a>
-        <button class="navbar-toggler" type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#navbarNavDropdown"
-            aria-controls="navbarNavDropdown" aria-expanded="false"
-            aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        
-        <div class="collapse navbar-collapse" id="navbarNavDropdown">
-            <ul class="navbar-nav custom-navbar-nav">          
-                <!-- 여행지 찾기 -->
-                <li class="nav-item">
-                    <c:url var="travelDestinationPage" value="/travel/search" />
-                    <a class="nav-link" href="${travelDestinationPage}">여행지 찾기</a>
-                </li>               
-                <!-- 여행 계획하기 -->
-                <li class="nav-item">
-                    <c:url var="travelPlanPage" value="/travel/plan" />
-                    <a class="nav-link" href="${travelPlanPage}">여행 계획하기</a>
-                </li>             
-                <!-- 나의 여행코스 -->
-                <li class="nav-item">
-                    <c:url var="traveCoursePage" value="/travel/plan/list" />
-                    <a class="nav-link" href="${traveCoursePage}">나의 여행코스</a>
-                </li>               
-                <!-- 여행일기 -->
-                <li class="nav-item">
-                    <c:url var="travelReviewPage" value="/post/review/list" />
-                    <a class="nav-link" href="${travelReviewPage}">여행후기</a>
-                </li> 
-                <!-- 여행일기 -->
-                <li class="nav-item">
-                    <c:url var="communityPage" value="/community/main" />
-                    <a class="nav-link" href="${communityPage}">커뮤니티</a>
-                </li>           
-            </ul>
-        </div>
-       
-    </div>
+	    <div class="container">
+	        <c:url var="audiroPage" value="/" />     
+	        <a class="navbar-brand" href="${audiroPage}">
+	        		<c:url var="audiroLogo" value="/images/logo30.png" />
+	        		<img src="${audiroLogo}" alt="logo" width="150" height="50" class="navbar-logo"/>
+	       	</a>
+	        <button class="navbar-toggler" type="button"
+	            data-bs-toggle="collapse"
+	            data-bs-target="#navbarNavDropdown"
+	            aria-controls="navbarNavDropdown" aria-expanded="false"
+	            aria-label="Toggle navigation">
+	            <span class="navbar-toggler-icon"></span>
+	        </button>
+	        
+	        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+	            <ul class="navbar-nav custom-navbar-nav mx-auto">
+	                      
+	                <!-- 여행지 찾기 -->
+	                <li class="nav-item">
+	                    <c:url var="travelDestinationPage" value="/travel/search" />
+	                    <a class="nav-link" href="${travelDestinationPage}">여행지 찾기</a>
+	                </li>               
+	                <!-- 여행 계획하기 -->
+	                <li class="nav-item">
+	                    <c:url var="travelPlanPage" value="/travel/plan" />
+	                    <a class="nav-link" href="${travelPlanPage}">여행 계획하기</a>
+	                </li>             
+	                <!-- 나의 여행코스 -->
+	                <li class="nav-item">
+	                    <c:url var="traveCoursePage" value="/travel/plan/list" />
+	                    <a class="nav-link" href="${traveCoursePage}">나의 여행코스</a>
+	                </li>               
+	             
+	                <!-- <li class="nav-item">
+	                    <c:url var="travelReviewPage" value="/post/review/list" />
+	                    <a class="nav-link" href="${travelReviewPage}">여행후기</a>
+	                </li> -->
+	                
+	        
+	                <!-- <li class="nav-item">
+	                    <c:url var="communityPage" value="/community/main" />
+	                    <a class="nav-link" href="${communityPage}">여행후기</a>
+	                </li> -->           
+	            </ul>
+	        </div>
+	       
+	    </div>
     </nav>
     
 <script

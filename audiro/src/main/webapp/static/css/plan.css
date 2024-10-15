@@ -91,9 +91,9 @@ input, h2, ul, #dayContainer, #planContainer, button, .favDestination{
 }
 
 .plans{
-	padding: 15px 20px;
+	padding: 10px 20px;
 	position: relative;
-	margin-bottom:30px;
+	margin-bottom:0px;
 }
 
 .plans.active {
@@ -107,7 +107,6 @@ input, h2, ul, #dayContainer, #planContainer, button, .favDestination{
 
 
 #planContainer h5 {
-	/* font-family: 'Cafe24SsurroundAir';  */
 	font-size: 2rem;
 	margin-bottom: .5em;
 }
@@ -172,7 +171,7 @@ img.deleteFavImg{
 }
 
 .name{
-	font-size:20px;
+	font-size:15px;
 }
 
 .daySize{

@@ -117,12 +117,7 @@
                     </div>
                 </div>
             
-	            <div id="recently-viewed-container" class="ms-5">
-	                <h3>최근 본 여행지</h3>
-	                 <div id="recently-viewed">
-	                    <!-- 최근 본 여행지 목록은 JavaScript에서 렌더링 -->
-	                </div>
-	            </div>
+	            
          
             
         </main>

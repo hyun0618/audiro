@@ -6,7 +6,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Spring Legacy 2</title>
+	<title>audiro</title>
 	<link
 		href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
 		rel="stylesheet"
@@ -24,31 +24,34 @@
 			<div class="row" id="allDiv">
 				<div class="col-2"></div>
 				<div class="col-8">
+				
 					<div class="card">
 						<div class="card-header">
 							<c:url var="planSearchPage" value="/travel/plan/search" />
 							<form method="get" action="${planSearchPage}">
-								<!-- 검색바 -->
-								<div class="row justify-content-end">
-									<div class="col-3">
-										<select class="form-control" name="category"
-											onchange="this.form.submit()">
-											<option value="c"
-												${empty param.category or param.category == 'c' ? 'selected' : ''}>작성순</option>
-											<option value="t" ${param.category == 't' ? 'selected' : ''}>제목순</option>
-										</select>
-									</div>
+						
+								<div class="row align-items-center justify-content-between">
+								    <div class="col text-center">
+								        <p style="font-size: 20px; margin-top:10px;">여행코스</p>
+								    </div>
+									<div class="col-auto">
+								        <select class="form-control" name="category" onchange="this.form.submit()">
+								            <option value="c" ${empty param.category or param.category == 'c' ? 'selected' : ''}>작성순</option>
+								            <option value="t" ${param.category == 't' ? 'selected' : ''}>제목순</option>
+								        </select>
+								    </div>
 								</div>
 							</form>
 						</div>
+						
 						<div class="tableList card-body m-5">
-							<table>
+							<table class="table mb-0">
 								<thead>
 									<tr>
 										<th>제목</th>
 										<th>기간</th>
 										<th></th>
-										<th>후기작성여부</th>
+										<th></th>
 									</tr>
 								</thead>
 								<tbody>
@@ -61,23 +64,15 @@
 											<c:set var="days" value="${t.duration+1}"></c:set>
 											<td>${t.startDate}-${t.endDate}</td>
 											<td>${t.duration}박${days}일</td>
-											<td>
-												<c:choose>
-													<c:when test="${t.isReviewed==0}">
-														No
-													</c:when>
-													<c:when test="${t.isReviewed==1}">
-														Yes
-													</c:when>
-												</c:choose>
-											</td>
-											<td class="img" plan-id="${t.travelPlanId}"><img
-												class="deletePlanImg" src="/audiro/images/delete.png" /></td>
+											
+											<td class="img" plan-id="${t.travelPlanId}">
+											<img class="deletePlanImg" src="/audiro/images/delete.png" /></td>
 										</tr>
 									</c:forEach>
 								</tbody>
 							</table>
 						</div>
+						
 					</div>
 				</div>
 				<div class="col-2"></div>
